@@ -58,3 +58,50 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Firebase stuff
+/[Aa]ssets/Firebase/
+/[Aa]ssets/PlayServicesResolver/
+/[Aa]ssets/Editor\ Default\ Resources/
+/[Aa]ssets/Firebase.meta
+/[Aa]ssets/PlayServicesResolver.meta
+/[Aa]ssets/Editor\ Default\ Resources.meta
+/[Aa]ssets/Plugins/Android/android.arch.*
+/[Aa]ssets/Plugins/Android/com.android.*
+/[Aa]ssets/Plugins/Android/com.crashlytics.*
+/[Aa]ssets/Plugins/Android/com.google.*
+/[Aa]ssets/Plugins/Android/firebase*
+/[Aa]ssets/Plugins/Android/Firebase.meta
+/[Aa]ssets/Plugins/Android/io.fabric.*
+/[Aa]ssets/Plugins/Android/libmessaging_unity_player_activity.jar
+/[Aa]ssets/Plugins/Android/libmessaging_unity_player_activity.jar.meta
+/[Aa]ssets/Plugins/Android/play-services-appinvite-*
+/[Aa]ssets/Plugins/Android/play-services-base-*
+/[Aa]ssets/Plugins/Android/play-services-basement-*
+/[Aa]ssets/Plugins/Android/play-services-tasks-*
+/[Aa]ssets/Plugins/Android/support-annotations-*
+/[Aa]ssets/Plugins/Android/support-*
+/[Aa]ssets/Plugins/Android/Firebase/
+/[Aa]ssets/Plugins/Android/Firebase*
+/[Aa]ssets/Plugins/iOS/Firebase/
+/[Aa]ssets/Plugins/iOS/Firebase*
+/[Aa]ssets/Plugins/x86_64/Firebase/
+/[Aa]ssets/Plugins/x86_64/Firebase*
+/[Aa]ssets/Parse/
+/[Aa]ssets/Parse.meta
+/remote_config_data
+
+#Android SDK
+/[Aa]ssets/Plugins/Android/com.google.firebase.*
+/[Aa]ssets/Plugins/Android/com.google.android.gms.*
+/[Aa]ssets/Plugins/Android/com.android.support.*
+/[Aa]ssets/Plugins/Android/com.google.games.*
+/ProjectSettings/AndroidResolverDependencies.xml
+/ProjectSettings/GvhProjectSettings.xml
+
+# Credentials files:
+**/GoogleService-Info*.plist*
+**/google-services*.json*
+
+#Temporary auto-generated Android Assets
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
