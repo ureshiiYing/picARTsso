@@ -37,7 +37,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         lobbyConnectButton.SetActive(true);
         roomListings = new List<RoomInfo>();
         isRoomPublic = true;
-        createRoomSize = 0;
+        createRoomSize = 3;
 
         // check if player keyed in a name, else generate one for them
         if(PlayerPrefs.HasKey("Nickname"))

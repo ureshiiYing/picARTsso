@@ -8,9 +8,6 @@ using UnityEngine.UI;
 public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 {
     [SerializeField]
-    private Chat chat;
-
-    [SerializeField]
     private int multiplayerSceneIndex;
 
 
@@ -23,12 +20,19 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 
     [SerializeField]
     private GameObject startButton;
+
     [SerializeField]
     private GameObject timeLimit;
     [SerializeField]
     private GameObject selectTheme;
     [SerializeField]
     private GameObject numOfPoints;
+    [SerializeField]
+    private GameObject timeLimitLabel;
+    [SerializeField]
+    private GameObject selectThemeLabel;
+    [SerializeField]
+    private GameObject numOfPointsLabel;
 
     [SerializeField]
     private Transform playerContainer;
@@ -72,6 +76,9 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
             timeLimit.SetActive(true);
             selectTheme.SetActive(true);
             numOfPoints.SetActive(true);
+            timeLimitLabel.SetActive(true);
+            selectThemeLabel.SetActive(true);
+            numOfPointsLabel.SetActive(true);
         }
         else
         {
@@ -79,6 +86,9 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
             timeLimit.SetActive(false);
             selectTheme.SetActive(false);
             numOfPoints.SetActive(false);
+            timeLimitLabel.SetActive(false);
+            selectThemeLabel.SetActive(false);
+            numOfPointsLabel.SetActive(false);
         }
         ClearPlayerListings();
         ListPlayers();
@@ -101,6 +111,9 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
             timeLimit.SetActive(true);
             selectTheme.SetActive(true);
             numOfPoints.SetActive(true);
+            timeLimitLabel.SetActive(true);
+            selectThemeLabel.SetActive(true);
+            numOfPointsLabel.SetActive(true);
         }
         
     }
@@ -108,26 +121,12 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     // linked to start button
     public void StartGame()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (!PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.CurrentRoom.IsOpen = false;
+            return;
         }
-
-        PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("EnterGame", RpcTarget.All, true);
-    }
-
-    // sync panel across all in the room
-    // yet to implement: host panel/ player panel depending on turn
-    [PunRPC]
-    public void EnterGame(bool bol)
-    {
-        roomPanel.SetActive(false);
-        waitPanel.SetActive(true);
-        if (chat != null)
-        {
-            chat.Connect();
-        }
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.LoadLevel(multiplayerSceneIndex);
     }
 
     IEnumerator rejoinLobby()
