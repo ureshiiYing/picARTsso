@@ -12,11 +12,15 @@ public class Chat : MonoBehaviour, IChatClientListener
     private string userID;
     [SerializeField]
     private InputField messageInput;
-    [SerializeField]
-    private Text messageDisplays;
     private string channelName;
     [SerializeField]
     private GameObject chatPanel;
+
+    [SerializeField]
+    private Transform messageContainer;
+    [SerializeField]
+    private GameObject messageListingPrefab; // gameobject containing text component
+    private int maxMessages = 100;
 
     // has yet to implement:
     // 1) limit number of messages stored in chat
@@ -47,12 +51,16 @@ public class Chat : MonoBehaviour, IChatClientListener
     // updates chat display box
     public void OnGetMessages(string channelName, string[] senders, object[] messages)
     {
-        string msgs = "";
+           
         for (int i = 0; i < senders.Length; i++)
         {
-            msgs = string.Format("{2} ", msgs, senders[i], messages[i]);
-            //test display for chat
-            messageDisplays.text = messageDisplays.text + "\n" + msgs;
+            if (messageContainer.childCount >= maxMessages)
+            {
+                Destroy(messageContainer.GetChild(0).gameObject); //destroyyyy oldest message and make way for new ones
+            }
+            GameObject tempListing = Instantiate(messageListingPrefab, messageContainer);
+            Text tempText = tempListing.transform.GetComponent<Text>();
+            tempText.text = string.Format("{2} ", "", senders[i], messages[i]); //wtfisthis
         }
     }
 
@@ -106,29 +114,33 @@ public class Chat : MonoBehaviour, IChatClientListener
 
     }
 
-    public void OpenChatOnClick()
-    { 
-        chatPanel.SetActive(true);
-
-    }
-
-    public void CloseChatOnClick()
-    {
-        chatPanel.SetActive(false);
-    }
-
     public void SendMessageOnClick()
     {
-        if (messageInput.text == "")
-        {
-            throw new System.NotImplementedException();
-        }
-        else
+        if (messageInput.text != "")
         {
             this.chatClient.PublishMessage(channelName, userID + ": " + messageInput.text);
             this.messageInput.text = "";
             Debug.Log("sent message");
         }
+    }
+
+    public void OnEnterSend()
+    {
+        if (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))
+        {
+            if (messageInput.text != "")
+            {
+                this.chatClient.PublishMessage(channelName, userID + ": " + messageInput.text);
+                this.messageInput.text = "";
+                Debug.Log("sent message");
+            }
+
+        }
+    }
+
+    void Start()
+    {
+        Connect();
     }
 
     // Update is called once per frame
