@@ -5,6 +5,8 @@ public class BrushToolUI : MonoBehaviour
 {
     public DrawManager manager;
     public Button brushButton;
+    public GameObject judgingScreen;
+    public UploadDownloadDrawing uploader;
 
     void Start()
     {
@@ -49,9 +51,19 @@ public class BrushToolUI : MonoBehaviour
         manager.SetBrushColour(brushButton.colors.normalColor);
     }
 
+    public void Clear()
+    {
+        manager.Clear();
+    }
+
     public void OnSubmit()
     {
+        // upload
+        uploader.Save();
+
         // load waiting (if there is still time) / judging panel (when time is up) on submit
+        judgingScreen.SetActive(true);
+        this.gameObject.SetActive(false);
         // calls submit function on game manager to call for drawing processing and uploading to firebase
     }
 

@@ -128,4 +128,16 @@ public class DrawManager : MonoBehaviour
         return results.Count > 0;
     }
 
+    // clears all strokes in the scene
+    public void Clear()
+    {
+        GameObject[] brushLines;
+        brushLines = GameObject.FindGameObjectsWithTag("Brush Line");
+
+        foreach (GameObject line in brushLines)
+        {
+            Destroy(line);
+        }
+    }
+
 } 
