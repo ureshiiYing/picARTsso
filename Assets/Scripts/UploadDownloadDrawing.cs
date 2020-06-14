@@ -53,8 +53,10 @@ public class UploadDownloadDrawing : MonoBehaviour
     {
         // create a storage ref
         var storage = FirebaseStorage.DefaultInstance;
-        var screenshotRef = storage.GetReference($"/drawings/{Guid.NewGuid()}.png");
-        // TODO: perhaps can create a new folder for each game room --> require a game room id
+        string filePath = $"/drawings/{Guid.NewGuid()}.png";
+        Debug.Log(filePath);
+        var screenshotRef = storage.GetReference(filePath);   
+        // TODO: perhaps can create a new folder for each game room --> require a game room id instead of drawings
 
         // convert texture2d into bytes
         var bytes = screenshot.EncodeToPNG();
@@ -76,7 +78,8 @@ public class UploadDownloadDrawing : MonoBehaviour
             yield break;
         }
 
-        // no error continue to get url
+
+        // no error continue to get a download url ==> technically not necessary for this game.
         var getURLTask = screenshotRef.GetDownloadUrlAsync();
         yield return new WaitUntil(() => getURLTask.IsCompleted);
 
@@ -87,9 +90,14 @@ public class UploadDownloadDrawing : MonoBehaviour
             yield break;
         }
 
-        // save the download URL
-        downloadURL = getURLTask.Result.ToString();
-        Debug.Log("Download from " + downloadURL);
+        Debug.Log("Download from " + getURLTask.Result);
+        // ^ not necessary
+
+        // save the storage reference of this drawing
+        downloadURL = "gs://picartsso.appspot.com" + filePath;
+        Debug.Log("file location is " + downloadURL);
+
+
     }
 
     public string GetDownloadURL()
@@ -110,7 +118,8 @@ public class UploadDownloadDrawing : MonoBehaviour
         if (path != null)
         {
             var storage = FirebaseStorage.DefaultInstance;
-            var screenshotRef = storage.GetReference(path);
+            var screenshotRef = storage.GetReferenceFromUrl(path);
+            Debug.Log("obtained!");
 
             var downloadTask = screenshotRef.GetBytesAsync(4 * 4096 * 4096); // file memory
             yield return new WaitUntil(() => downloadTask.IsCompleted);
@@ -119,12 +128,19 @@ public class UploadDownloadDrawing : MonoBehaviour
             texture.LoadImage(downloadTask.Result);
 
             // display the downloaded image
-            display.GetComponent<RawImage>().texture = texture;
+            SetDisplay(texture);
+            Debug.Log("texture displayed");
         } 
         else
         {
             // display a default image? skip over?
+            Debug.LogError("Cannot download as no path exists");
         }
+    }
+
+    public void SetDisplay(Texture2D texture)
+    {
+        display.GetComponent<RawImage>().texture = texture;
     }
 
 }

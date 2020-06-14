@@ -77,7 +77,7 @@ public class DrawManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Touch UI");
+                // Debug.Log("Touch UI");
                 theTrail = null;
             }
         }

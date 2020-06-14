@@ -64,6 +64,8 @@ public class BrushToolUI : MonoBehaviour
         // load waiting (if there is still time) / judging panel (when time is up) on submit
         judgingScreen.SetActive(true);
         this.gameObject.SetActive(false);
+        // cannot call clear here because drawing is still saving
+
         // calls submit function on game manager to call for drawing processing and uploading to firebase
     }
 
