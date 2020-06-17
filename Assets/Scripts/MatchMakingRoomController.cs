@@ -15,6 +15,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     private GameObject lobbyPanel;
     [SerializeField]
     private GameObject roomPanel;
+    [SerializeField]
+    private GameObject waitPanel;
 
     [SerializeField]
     private GameObject startButton;
@@ -71,9 +73,9 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         {
             //redundant tbh
             startButton.SetActive(true);
-            timeLimit.gameObject.SetActive(true);
-            selectTheme.gameObject.SetActive(true);
-            numOfPoints.gameObject.SetActive(true);
+            timeLimit.SetActive(true);
+            selectTheme.SetActive(true);
+            numOfPoints.SetActive(true);
             timeLimitLabel.SetActive(true);
             selectThemeLabel.SetActive(true);
             numOfPointsLabel.SetActive(true);
@@ -81,9 +83,9 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         else
         {
             startButton.SetActive(false);
-            timeLimit.gameObject.SetActive(false);
-            selectTheme.gameObject.SetActive(false);
-            numOfPoints.gameObject.SetActive(false);
+            timeLimit.SetActive(false);
+            selectTheme.SetActive(false);
+            numOfPoints.SetActive(false);
             timeLimitLabel.SetActive(false);
             selectThemeLabel.SetActive(false);
             numOfPointsLabel.SetActive(false);
@@ -106,101 +108,14 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             startButton.SetActive(true);
-            timeLimit.gameObject.SetActive(true);
-            selectTheme.gameObject.SetActive(true);
-            numOfPoints.gameObject.SetActive(true);
+            timeLimit.SetActive(true);
+            selectTheme.SetActive(true);
+            numOfPoints.SetActive(true);
             timeLimitLabel.SetActive(true);
             selectThemeLabel.SetActive(true);
             numOfPointsLabel.SetActive(true);
         }
         
-    }
-
-    // linked to dropdown bar selecting time limit of room, updates custom room property
-    public void OnTimeLimitChanged(int val)
-    {
-        ExitGames.Client.Photon.Hashtable newRoomOps = new ExitGames.Client.Photon.Hashtable();
-        switch (val)
-        {
-            case 0:
-                newRoomOps.Add("TimeLimit", 30);
-                break;
-            case 1:
-                newRoomOps.Add("TimeLimit", 60);
-                break;
-            case 2:
-                newRoomOps.Add("TimeLimit", 90);
-                break;
-            case 3:
-                newRoomOps.Add("TimeLimit", 120);
-                break;
-            case 4:
-                newRoomOps.Add("TimeLimit", 180);
-                break;
-            case 5:
-                newRoomOps.Add("TimeLimit", 300);
-                break;
-            default:
-                Debug.Log("nothing is selected for time limit...");
-                break;
-
-        }
-        PhotonNetwork.CurrentRoom.SetCustomProperties(newRoomOps);
-    }
-
-    // linked to dropdown bar selecting max points of room, updates custom room property
-    public void OnMaxPointsChanged(int val)
-    {
-        ExitGames.Client.Photon.Hashtable newRoomOps = new ExitGames.Client.Photon.Hashtable();
-        switch (val)
-        {
-            case 0:
-                newRoomOps.Add("MaxPoints", 5);
-                break;
-            case 1:
-                newRoomOps.Add("MaxPoints", 10);
-                break;
-            case 2:
-                newRoomOps.Add("MaxPoints", 15);
-                break;
-            case 3:
-                newRoomOps.Add("MaxPoints", 20);
-                break;
-            default:
-                Debug.Log("nothing is selected for max points...");
-                break;
-
-        }
-        PhotonNetwork.CurrentRoom.SetCustomProperties(newRoomOps);
-    }
-
-    // linked to dropdown bar selecting theme of room, updates custom room property
-    public void OnThemeChanged(int val)
-    {
-        ExitGames.Client.Photon.Hashtable newRoomOps = new ExitGames.Client.Photon.Hashtable();
-        switch (val)
-        {
-            case 0:
-                newRoomOps.Add("Theme", "GeneralTheme");
-                break;
-            case 1:
-                newRoomOps.Add("Theme", "AnimalsTheme");
-                break;
-            case 2:
-                newRoomOps.Add("Theme", "FoodTheme");
-                break;
-            case 3:
-                newRoomOps.Add("Theme", "ObjectsTheme");
-                break;
-            case 4:
-                newRoomOps.Add("Theme", "SportsTheme");
-                break;
-            default:
-                Debug.Log("nothing is selected for theme...");
-                break;
-
-        }
-        PhotonNetwork.CurrentRoom.SetCustomProperties(newRoomOps);
     }
 
     // linked to start button
