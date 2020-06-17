@@ -157,10 +157,12 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     {
 
         Debug.Log("Creating room now");
-        Debug.Log("room created visible: " + isRoomPublic);
         RoomOptions roomOps = new RoomOptions() { IsVisible = isRoomPublic, IsOpen = true, MaxPlayers = (byte)createRoomSize };
+        roomOps.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+        roomOps.CustomRoomProperties.Add("MaxPoints", 5);
+        roomOps.CustomRoomProperties.Add("Theme", "GeneralTheme");
+        roomOps.CustomRoomProperties.Add("TimeLimit", 30);
         PhotonNetwork.CreateRoom(createRoomName, roomOps);
-
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
