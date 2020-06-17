@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun; // to access what theme the player selected?
+using TMPro;
 
 public class WordGenController : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class WordGenController : MonoBehaviour
     private GameObject hostPanel;
 
     [SerializeField]
-    private Text drawingWordsDisplay;
+    private TMP_Text drawingWordsDisplay;
     private string hostWord;
 
     // Start is called before the first frame update
@@ -64,7 +65,7 @@ public class WordGenController : MonoBehaviour
     {
         waitingPanel.SetActive(false);
         playerPanel.SetActive(true);
-        drawingWordsDisplay.text += wordToDisplay;
+        drawingWordsDisplay.GetComponent<TMP_Text>().text += wordToDisplay;
         //start and sync timer
     }
 }
