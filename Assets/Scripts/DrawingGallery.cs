@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Assertions;
 
 public class DrawingGallery : MonoBehaviour
 {
-    // public GameObject gameManager; 
-    // ^ use uploader object temporarily
+    public GameManager gameManager; 
+
     public UploadDownloadDrawing uploader;
     public Texture2D defaultTexture;
     public GameObject winnerPanel;
@@ -20,7 +21,10 @@ public class DrawingGallery : MonoBehaviour
     // Start is called before the first frame update
     public void OnEnable()
     {
-        // load a waiting screen? need to wait for everyone's download URL 
+        // judging screen is only loaded after everyone has submitted
+
+        // obtain the downloadPaths from the game manager
+        // downloadPaths = gameManager.GetArrayOfDownloadPaths();
         downloadPaths = new string[1]; // num of players obtain frm gameManager
 
         // obtain all the download paths from the players
@@ -32,6 +36,8 @@ public class DrawingGallery : MonoBehaviour
         //    Debug.Log("set download url " + i);
         //}
 
+        // default texture is set for testing
+        // in actual game, the drawing from index 0 should be displayed
         uploader.SetDisplay(defaultTexture);
         
     }
@@ -61,42 +67,36 @@ public class DrawingGallery : MonoBehaviour
         uploader.DownloadDrawing(downloadPaths[index]);
     }
 
-    public void NextDrawing()
+    // can combine these two into one function
+    public void ToggleDrawing(int value)
     {
+        Assert.IsTrue(value == 0 || value == 1);
+        if (value == 0)
+        {
+            drawingIndex -= 1;
+        }
+        else if (value == 1)
+        {
+            drawingIndex += 1;
+        } else
+        {
+            Debug.Log("wrong value: " + value);
+        }
 
         // if within player number limits
-        if ((drawingIndex + 1) >= 0 && drawingIndex < 2)
+        if (drawingIndex >= 0 && drawingIndex < 1) // instead of 1 should be player numbers
         {
-            drawingIndex += 1;
             LoadDrawing(drawingIndex);
         }
-        // else do not change drawing
+        // else display a default drawing
         else
         {
-            drawingIndex += 1;
             uploader.SetDisplay(defaultTexture);
         }
 
         Debug.Log("showing: " + drawingIndex);
     }
 
-    public void PreviousDrawing()
-    {
-
-        // if within player number limits
-        if ((drawingIndex - 1) >= 0 && drawingIndex < 1)
-        {
-            drawingIndex -= 1;
-            LoadDrawing(drawingIndex);
-        }
-        // else do not change drawing
-        else
-        {
-            drawingIndex -= 1;
-            uploader.SetDisplay(defaultTexture);
-        }
-        Debug.Log("showing: " + drawingIndex);
-    }
 
     public void SetWinner()
     {
@@ -108,6 +108,10 @@ public class DrawingGallery : MonoBehaviour
     private IEnumerator CoSetWinner()
     {
         winnerIndex = drawingIndex;
+
+        // display the winning drawing
+        LoadDrawing(winnerIndex);
+
         winnerNameText.GetComponent<TMP_Text>().text = "Player " + winnerIndex + " !"; // set to player name
         // pop up something to show that this is the winner for this round
         winnerPanel.SetActive(true);

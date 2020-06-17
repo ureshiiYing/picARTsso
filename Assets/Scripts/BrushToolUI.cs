@@ -61,7 +61,9 @@ public class BrushToolUI : MonoBehaviour
         // upload
         uploader.Save();
 
-        // load waiting (if there is still time) / judging panel (when time is up) on submit
+        // save the url in player info
+
+        // load judging only when everyone has submitted so this part should be moved
         judgingScreen.SetActive(true);
         this.gameObject.SetActive(false);
         // cannot call clear here because drawing is still saving

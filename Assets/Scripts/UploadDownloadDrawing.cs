@@ -80,6 +80,7 @@ public class UploadDownloadDrawing : MonoBehaviour
 
 
         // no error continue to get a download url ==> technically not necessary for this game.
+        // can keep this part for the save function
         var getURLTask = screenshotRef.GetDownloadUrlAsync();
         yield return new WaitUntil(() => getURLTask.IsCompleted);
 
@@ -109,20 +110,26 @@ public class UploadDownloadDrawing : MonoBehaviour
     // obtain an array of paths from the users submission
     public void DownloadDrawing(string path)
     {
-        StartCoroutine(CoDownloadScreenshot(path));
+        StartCoroutine(CoDownloadDrawing(path));
     }
 
-    private IEnumerator CoDownloadScreenshot(string path)
+    private IEnumerator CoDownloadDrawing(string path)
     {
         // if the path exists
         if (path != null)
         {
             var storage = FirebaseStorage.DefaultInstance;
             var screenshotRef = storage.GetReferenceFromUrl(path);
-            Debug.Log("obtained!");
+            Debug.Log("drawing obtained!");
 
-            var downloadTask = screenshotRef.GetBytesAsync(4 * 4096 * 4096); // file memory
+            var downloadTask = screenshotRef.GetBytesAsync(4 * 4096 * 4096);  // max file memory
             yield return new WaitUntil(() => downloadTask.IsCompleted);
+
+            // handle any error
+            if (downloadTask.Exception != null)
+            {
+                Debug.LogError("Failed to download because " + downloadTask.Exception);
+            }
 
             var texture = new Texture2D(2, 2);
             texture.LoadImage(downloadTask.Result);
@@ -134,13 +141,43 @@ public class UploadDownloadDrawing : MonoBehaviour
         else
         {
             // display a default image? skip over?
-            Debug.LogError("Cannot download as no path exists");
+            Debug.LogError("Cannot download as no path provided");
         }
     }
 
     public void SetDisplay(Texture2D texture)
     {
         display.GetComponent<RawImage>().texture = texture;
+    }
+
+    public void DeleteDrawing(string path)
+    {
+        StartCoroutine(CoDeleteDrawing(path));
+    }
+
+    private IEnumerator CoDeleteDrawing(string path)
+    {
+        // given an input
+        if (path != null)
+        {
+            var storage = FirebaseStorage.DefaultInstance;
+            var screenshotRef = storage.GetReferenceFromUrl(path);
+
+            var deleteTask = screenshotRef.DeleteAsync();
+            yield return new WaitUntil(() => deleteTask.IsCompleted);
+
+            // handle error
+            if (deleteTask.Exception != null)
+            {
+                Debug.LogError("Cannot delete this drawing because " + deleteTask.Exception);
+            }
+
+            Debug.Log("Successfully deleted");
+        }
+        else
+        {
+            Debug.LogError("Cannot delete as no download path provided");
+        }
     }
 
 }

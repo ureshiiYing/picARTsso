@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -38,52 +39,58 @@ public class DrawManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        // if someone touches the screen
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began
-            || Input.GetMouseButtonDown(0))
+        try
         {
-            // if not touching UI
-            if (!IsPointerOverUI())
+            // if someone touches the screen
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began
+                || Input.GetMouseButtonDown(0))
             {
-                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                float dist;
-                if (planeObj.Raycast(mouseRay, out dist))
+                // if not touching UI
+                if (!IsPointerOverUI())
                 {
-                    startPos = mouseRay.GetPoint(dist);
+                    Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    float dist;
+                    if (planeObj.Raycast(mouseRay, out dist))
+                    {
+                        startPos = mouseRay.GetPoint(dist);
+                    }
+                    theTrail = Instantiate(drawPrefab, startPos, Quaternion.identity);
                 }
-                theTrail = Instantiate(drawPrefab, startPos, Quaternion.identity);
+                else
+                {
+                    Debug.Log("Touch UI");
+                }
+
+            }
+            // there is a prolonged touch
+            else if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved
+                || Input.GetMouseButton(0))
+            {
+                // if not touching UI
+                if (!IsPointerOverUI())
+                {
+                    Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    float dist;
+                    if (planeObj.Raycast(mouseRay, out dist))
+                    {
+                        theTrail.transform.position = mouseRay.GetPoint(dist);
+                        startPos = mouseRay.GetPoint(dist);
+                    }
+                }
+                else
+                {
+                    // Debug.Log("Touch UI");
+                    theTrail = null;
+                }
             }
             else
             {
-                Debug.Log("Touch UI");
-            }
-
-        } 
-        // there is a prolonged touch
-        else if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved 
-            || Input.GetMouseButton(0))
-        {
-            // if not touching UI
-            if (!IsPointerOverUI())
-            {
-                Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                float dist;
-                if (planeObj.Raycast(mouseRay, out dist))
-                {
-                    theTrail.transform.position = mouseRay.GetPoint(dist);
-                    startPos = mouseRay.GetPoint(dist);
-                }
-            }
-            else
-            {
-                // Debug.Log("Touch UI");
                 theTrail = null;
             }
-        }
-        else
+        } 
+        catch (NullReferenceException)
         {
-            theTrail = null;
+            Debug.Log("null trail");
         }
         
     }
