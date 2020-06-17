@@ -415,7 +415,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 10 seconds
+  m_Text: 30 seconds
 --- !u!222 &32962037
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -523,7 +523,18 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2113752880}
+        m_MethodName: OnMaxPointsChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &46103743
 MonoBehaviour:
@@ -1040,11 +1051,26 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Animals
       m_Image: {fileID: 0}
+    - m_Text: Food
+      m_Image: {fileID: 0}
     - m_Text: Objects
+      m_Image: {fileID: 0}
+    - m_Text: Sports
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2113752880}
+        m_MethodName: OnThemeChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &133716592
 MonoBehaviour:
@@ -2108,34 +2134,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 502762343}
   m_CullTransparentMesh: 0
---- !u!1 &510380629 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 20382140443161148, guid: 731ad3f40452f441f9da2ab3b262dc52,
-    type: 3}
-  m_PrefabInstance: {fileID: 2200502302872995427}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &510380631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 510380629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 0
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
-  viewIdField: 1
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &528918687
 GameObject:
   m_ObjectHideFlags: 0
@@ -2564,19 +2562,32 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: 10 seconds
-      m_Image: {fileID: 0}
     - m_Text: 30 seconds
       m_Image: {fileID: 0}
     - m_Text: 1 minute
       m_Image: {fileID: 0}
+    - m_Text: 1 minutes 30 seconds
+      m_Image: {fileID: 0}
     - m_Text: 2 minutes
+      m_Image: {fileID: 0}
+    - m_Text: 3 minutes
       m_Image: {fileID: 0}
     - m_Text: 5 minutes
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2113752880}
+        m_MethodName: OnTimeLimitChanged
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &633143983
 MonoBehaviour:
@@ -8537,7 +8548,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 2200502302872995427}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 510380629}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c22597ea9cb744e8e8f8e763ee55e91d, type: 3}
@@ -8754,6 +8765,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 510380631, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
+      propertyPath: viewIdField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 20382140443161148, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
       propertyPath: m_Name
@@ -8831,21 +8846,6 @@ PrefabInstance:
       objectReference: {fileID: 1251546197}
     - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
-      propertyPath: playerContainer
-      value: 
-      objectReference: {fileID: 1119709083}
-    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
-        type: 3}
-      propertyPath: roomsNameDisplay
-      value: 
-      objectReference: {fileID: 1060227432}
-    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
-        type: 3}
-      propertyPath: waitPanel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
-        type: 3}
       propertyPath: timeLimit
       value: 
       objectReference: {fileID: 633143980}
@@ -8861,9 +8861,9 @@ PrefabInstance:
       objectReference: {fileID: 46103740}
     - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
-      propertyPath: chat
+      propertyPath: timeLimitLabel
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 803681195}
     - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
       propertyPath: selectThemeLabel
@@ -8876,10 +8876,16 @@ PrefabInstance:
       objectReference: {fileID: 1068351158}
     - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
-      propertyPath: timeLimitLabel
+      propertyPath: playerContainer
       value: 
-      objectReference: {fileID: 803681195}
-    m_RemovedComponents: []
+      objectReference: {fileID: 1119709083}
+    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
+        type: 3}
+      propertyPath: roomsNameDisplay
+      value: 
+      objectReference: {fileID: 1060227432}
+    m_RemovedComponents:
+    - {fileID: 510380631, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
 --- !u!1001 &2782439926720884491
 PrefabInstance:
@@ -9041,11 +9047,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LobbyControllerMatchmaking
-      objectReference: {fileID: 0}
-    - target: {fileID: 5654258655536496235, guid: 4bf926f75f1374b368b113b09a22a6d5,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4bf926f75f1374b368b113b09a22a6d5, type: 3}
