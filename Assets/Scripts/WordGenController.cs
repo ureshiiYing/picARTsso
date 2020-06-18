@@ -7,10 +7,9 @@ using TMPro;
 
 public class WordGenController : MonoBehaviour
 {
-    // if reloading scene after every round may have to donotdestroy on load and
-    // make text worddisplay a prefab
 
-    // think of how to change themes
+    // main fn: generate word
+
     [SerializeField]
     private TextAsset textFile; // .txt file for the theme
     private string[] words;

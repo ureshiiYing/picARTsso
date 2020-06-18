@@ -8765,10 +8765,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 510380631, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
-      propertyPath: viewIdField
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 20382140443161148, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
       propertyPath: m_Name
@@ -8884,8 +8880,7 @@ PrefabInstance:
       propertyPath: roomsNameDisplay
       value: 
       objectReference: {fileID: 1060227432}
-    m_RemovedComponents:
-    - {fileID: 510380631, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
 --- !u!1001 &2782439926720884491
 PrefabInstance:

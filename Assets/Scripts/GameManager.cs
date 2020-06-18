@@ -4,7 +4,6 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -47,10 +46,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private GameObject hostPanel;
     [SerializeField] private GameObject waitingRoom;
 
-    // timer studd
+    // timer stuff
     private int currTime;
     private Coroutine CoTimer;
     [SerializeField] private GameObject timerUI;
+
+    [SerializeField] private WordGenController wordGenerator;
 
     #endregion
 
@@ -59,7 +60,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (photonEvent.Code >= 200) return;
 
-        Debug.Log("event :<");
         EventCodes e = (EventCodes)photonEvent.Code;
         object[] o = (object[])photonEvent.CustomData;
 
@@ -74,7 +74,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             //    break;
 
             case EventCodes.RefreshTimer:
-                Debug.Log("refresh pls");
                 RefreshTimer_R(o);
                 break;
         }
@@ -124,10 +123,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         //    players[i] = PhotonNetwork.PlayerList[i];
         //}
 
-
     }
 
-    
+    public void OnHostDone()
+    {
+        wordGenerator.OnWordConfirmation();
+        // stop the host countdown timer
+        StopCoroutine(CoTimer);
+
+        InitializeTimer(timeLimit);
+        
+    }
 
     // TODO: make everyone call this
     public void SetNextHost() //int hostIndex)
@@ -159,13 +165,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void InitializeTimer(int time)
     {
-        Debug.Log("Initialising");
         currTime = time;
         RefreshTimerUI();
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("start coroutine");
             CoTimer = StartCoroutine(Timer());
         }
     }
@@ -179,14 +183,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private IEnumerator Timer()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(1f);
 
         currTime -= 1;
         Debug.Log(currTime);
 
-        if (currTime <= 0) 
+        if (currTime < 0) 
         {
+            //StopCoroutine(CoTimer);
             CoTimer = null;
+            yield break;
             // end the game...
         }
         else
@@ -259,7 +265,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // ask everyone else to refresh their timer
     public void RefreshTimer_R(object[] data)
     {
-        Debug.Log("receive refresh");
         currTime = (int)data[0];
         RefreshTimerUI();
     }
