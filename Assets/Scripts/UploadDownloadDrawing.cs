@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Firebase.Storage;
+using Photon.Pun;
 
 public class UploadDownloadDrawing : MonoBehaviour
 {
@@ -53,7 +54,8 @@ public class UploadDownloadDrawing : MonoBehaviour
     {
         // create a storage ref
         var storage = FirebaseStorage.DefaultInstance;
-        string filePath = $"/drawings/{Guid.NewGuid()}.png";
+        string roomName = PhotonNetwork.CurrentRoom.Name;
+        string filePath = $"/{roomName}/{Guid.NewGuid()}.png";
         Debug.Log(filePath);
         var screenshotRef = storage.GetReference(filePath);   
         // TODO: perhaps can create a new folder for each game room --> require a game room id instead of drawings
@@ -98,11 +100,29 @@ public class UploadDownloadDrawing : MonoBehaviour
         downloadURL = "gs://picartsso.appspot.com" + filePath;
         Debug.Log("file location is " + downloadURL);
 
+        // set player URL
+        yield return StartCoroutine(CoUpdatePlayerURL());
+        Debug.Log("set");
 
+    }
+
+    private IEnumerator CoUpdatePlayerURL()
+    {
+        // code to set player URL
+        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
+        playerProps.Add("URL", downloadURL);
+        Debug.Log("added");
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
+
+        // to discuss: if we rly nd to wait
+        yield return new WaitForSeconds(1f);
+        
+        Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties["URL"].ToString());
     }
 
     public string GetDownloadURL()
     {
+        Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties["URL"].ToString());
         return downloadURL;
     }
 

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1654442817358980822}
   - component: {fileID: 5629532387184666507}
-  - component: {fileID: 510380631}
   m_Layer: 0
   m_Name: RoomControllerMatchmaking
   m_TagString: Untagged
@@ -47,7 +46,6 @@ MonoBehaviour:
   multiplayerSceneIndex: 1
   lobbyPanel: {fileID: 0}
   roomPanel: {fileID: 0}
-  waitPanel: {fileID: 0}
   startButton: {fileID: 0}
   timeLimit: {fileID: 0}
   selectTheme: {fileID: 0}
@@ -59,25 +57,3 @@ MonoBehaviour:
   playerListingPrefab: {fileID: 5107828152143432839, guid: 39d826c9ee7334b1e856d3049d217875,
     type: 3}
   roomsNameDisplay: {fileID: 0}
---- !u!114 &510380631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 20382140443161148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 0
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
-  viewIdField: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0

@@ -42,6 +42,8 @@ public class DrawingGallery : MonoBehaviour
         
     }
 
+    
+
     // just for testing purposes: 
     public void Refresh()
     {
