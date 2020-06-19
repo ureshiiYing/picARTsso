@@ -56,19 +56,6 @@ public class BrushToolUI : MonoBehaviour
         manager.Clear();
     }
 
-    public void OnSubmit()
-    {
-        // upload
-        uploader.Save();
-
-        // save the url in player info
-
-        // load judging only when everyone has submitted so this part should be moved
-        judgingScreen.SetActive(true);
-        this.gameObject.SetActive(false);
-        // cannot call clear here because drawing is still saving
-
-        // calls submit function on game manager to call for drawing processing and uploading to firebase
-    }
+    
 
 }

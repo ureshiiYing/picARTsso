@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         StartNewRound,
         SetNextHost,
-        RefreshTimer
+        RefreshTimer,
+        OnAllSubmitted
     }
 
     //public enum GameState
@@ -36,7 +37,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private int timeLimit;
     private int hostTimeLimit = 30;
     private int numOfPointsToWin;
-    private int numOfPlayers; // forgot if this is necessary or i can get it from photonRoom?
 
     // fields for recording players
     private static Player[] players;
@@ -45,13 +45,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // GameObject
     [SerializeField] private GameObject hostPanel;
     [SerializeField] private GameObject waitingRoom;
+    [SerializeField] private WordGenController wordGenerator;
+    [SerializeField] private UploadDownloadDrawing uploader;
+    [SerializeField] private GameObject drawingUI;
+    [SerializeField] private GameObject judgingUI;
+    [SerializeField] private GameObject pickPanel;
 
     // timer stuff
     private int currTime;
     private Coroutine CoTimer;
     [SerializeField] private GameObject timerUI;
 
-    [SerializeField] private WordGenController wordGenerator;
+    
 
     #endregion
 
@@ -75,6 +80,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
             case EventCodes.RefreshTimer:
                 RefreshTimer_R(o);
+                break;
+
+            case EventCodes.OnAllSubmitted:
+                OnAllSubmitted_R();
                 break;
         }
     }
@@ -109,7 +118,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         timeLimit = (int) PhotonNetwork.CurrentRoom.CustomProperties["TimeLimit"];
         numOfPointsToWin = (int)PhotonNetwork.CurrentRoom.CustomProperties["MaxPoints"];
-        numOfPlayers = PhotonNetwork.PlayerList.Length;
         players = PhotonNetwork.PlayerList;
         
         currHost = 0;
@@ -132,20 +140,57 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         StopCoroutine(CoTimer);
 
         InitializeTimer(timeLimit);
+
         
     }
 
-    // TODO: make everyone call this
-    public void SetNextHost() //int hostIndex)
+    // save the upload string, update player status
+    public void OnSubmit()
     {
-        if (currHost == (numOfPlayers - 1)) {
-            currHost = 0;
+        // upload and saves the drawing
+        uploader.Save();
+
+        // transition from drawingUI to waitingUI
+        drawingUI.SetActive(false);
+        waitingRoom.SetActive(true);
+
+        // set player's bool hasSubmitted
+        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
+        playerProps.Add("hasSubmitted", true);
+        Debug.Log("added");
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
+
+        //change scoreboard toggle => to be implemented after implementing scoreboard behaviour
+
+        // check if everyone has submitted
+        if (DidAllSubmit())
+        {
+            OnAllSubmitted_S();
         }
-        else
-        { 
-            currHost += 1;
-        }
+
     }
+
+    private bool DidAllSubmit()
+    {
+        foreach(Player player in PhotonNetwork.PlayerList)
+        {
+            // if this player is not the host
+            if (player != PhotonNetwork.PlayerList[currHost])
+            {
+                // if this player hasnt submit
+                if ((bool)player.CustomProperties["hasSubmitted"] == false)
+                {
+                    return false;
+                }
+            }
+        }
+        
+
+        return true;
+    }
+
+    
+
 
     public void SetWinnerOfThisRound()
     {
@@ -156,6 +201,20 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private void ScoreCheck()
     {
 
+    }
+
+    // TODO: make everyone call this
+    public void SetNextHost() //int hostIndex)
+    {
+        int numOfPlayers = PhotonNetwork.PlayerList.Length;
+        if (currHost == (numOfPlayers - 1))
+        {
+            currHost = 0;
+        }
+        else
+        {
+            currHost += 1;
+        }
     }
 
     private void EndGame()
@@ -190,7 +249,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (currTime < 0) 
         {
-            //StopCoroutine(CoTimer);
             CoTimer = null;
             yield break;
             // end the game...
@@ -205,6 +263,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public string[] GetArrayOfDownloadPaths()
     {
+        int numOfPlayers = PhotonNetwork.PlayerList.Length;
         string[] downloadPaths = new string[numOfPlayers - 1]; // exclude the host
 
         for(int i = 0; i < numOfPlayers; i++)
@@ -268,6 +327,34 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         currTime = (int)data[0];
         RefreshTimerUI();
     }
+
+    public void OnAllSubmitted_S()
+    {
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.OnAllSubmitted,
+            null,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void OnAllSubmitted_R()
+    {
+        // load everyone into the judging scene
+        waitingRoom.SetActive(false);
+        judgingUI.SetActive(true);
+
+        // only host can see pick button
+        if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
+        {
+            pickPanel.SetActive(true);
+        }
+        else
+        {
+            pickPanel.SetActive(false);
+        }
+    }
+
 
     #endregion
 }
