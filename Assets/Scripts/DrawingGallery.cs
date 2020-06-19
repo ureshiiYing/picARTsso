@@ -124,4 +124,6 @@ public class DrawingGallery : MonoBehaviour
 
         // should trigger the next round... so this code should be in game manager script
     }
+
+
 }

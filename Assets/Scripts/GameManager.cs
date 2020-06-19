@@ -155,19 +155,28 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         waitingRoom.SetActive(true);
 
         // set player's bool hasSubmitted
+        StartCoroutine(CoSubmission());
+
+        //change scoreboard toggle => to be implemented after implementing scoreboard behaviour
+
+        
+
+    }
+
+    private IEnumerator CoSubmission()
+    {
         ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
         playerProps.Add("hasSubmitted", true);
         Debug.Log("added");
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
 
-        //change scoreboard toggle => to be implemented after implementing scoreboard behaviour
+        yield return new WaitForSeconds(1f);
 
         // check if everyone has submitted
         if (DidAllSubmit())
         {
             OnAllSubmitted_S();
         }
-
     }
 
     private bool DidAllSubmit()
