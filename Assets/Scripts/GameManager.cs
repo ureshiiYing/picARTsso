@@ -278,7 +278,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         for(int i = 0; i < numOfPlayers; i++)
         {
             // nd to exclude host
-            downloadPaths[i] = players[i].CustomProperties["URL"].ToString();
+            if (PhotonNetwork.LocalPlayer != PhotonNetwork.PlayerList[currHost])
+            {
+                downloadPaths[i] = players[i].CustomProperties["URL"].ToString();
+                Debug.Log(downloadPaths[i]);
+            }
         }
 
         return downloadPaths;
@@ -349,6 +353,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void OnAllSubmitted_R()
     {
+        // stop the countdown
+        StopCoroutine(CoTimer);
+
         // load everyone into the judging scene
         waitingRoom.SetActive(false);
         judgingUI.SetActive(true);

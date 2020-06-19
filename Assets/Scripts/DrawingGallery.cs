@@ -24,8 +24,8 @@ public class DrawingGallery : MonoBehaviour
         // judging screen is only loaded after everyone has submitted
 
         // obtain the downloadPaths from the game manager
-        // downloadPaths = gameManager.GetArrayOfDownloadPaths();
-        downloadPaths = new string[1]; // num of players obtain frm gameManager
+        downloadPaths = gameManager.GetArrayOfDownloadPaths();
+        //downloadPaths = new string[1]; // num of players obtain frm gameManager
 
         // obtain all the download paths from the players
         // need to iterate through player info? to obtain the download paths?
