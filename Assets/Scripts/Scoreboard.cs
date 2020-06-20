@@ -63,8 +63,7 @@ public class Scoreboard : MonoBehaviour
     {
         int len = PhotonNetwork.PlayerList.Length;
         Player[] players = new Player[len];
-        int currScore = 0;
-        int currIndex = 0;
+        
         // local copy
         for(int i = 0; i < len; i++)
         {
@@ -73,6 +72,8 @@ public class Scoreboard : MonoBehaviour
         // selection sort
         for (int i = 0; i < len; i ++)
         {
+            int currScore = (int)players[i].CustomProperties["Score"];
+            int currIndex = i; // bcuz have to separate out score and player
             for (int j = i; j < len; j ++)
             {
                 int tempScore = (int)players[j].CustomProperties["Score"];
@@ -86,6 +87,7 @@ public class Scoreboard : MonoBehaviour
             Player temp = players[i];
             players[i] = players[currIndex];
             players[currIndex] = temp;
+            Debug.Log("score sort " + i + "  " + players[i].CustomProperties["Score"]);
         }
 
         sortedPlayers = players;
@@ -111,6 +113,7 @@ public class Scoreboard : MonoBehaviour
         Player[] players = SortByScore();
         foreach (Player player in players)
         {
+            Debug.Log(player.CustomProperties["Score"].ToString());
             GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
             TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
             TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();

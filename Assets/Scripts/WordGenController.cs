@@ -57,6 +57,8 @@ public class WordGenController : MonoBehaviour
         // host goes to waiting
         hostPanel.SetActive(false);
         waitingPanel.SetActive(true);
+        // generate another word to use for next time
+        GenerateWord();
     }
 
     [PunRPC]
