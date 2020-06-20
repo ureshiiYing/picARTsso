@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Assertions;
+using Photon.Realtime;
 
 public class DrawingGallery : MonoBehaviour
 {
-    public GameManager gameManager; 
-
+    
     public UploadDownloadDrawing uploader;
     public Texture2D defaultTexture;
-    public GameObject winnerPanel;
-    public TMP_Text winnerNameText;
 
     private string[] downloadPaths;
     private int drawingIndex = -1;
@@ -24,17 +22,7 @@ public class DrawingGallery : MonoBehaviour
         // judging screen is only loaded after everyone has submitted
 
         // obtain the downloadPaths from the game manager
-        downloadPaths = gameManager.GetArrayOfDownloadPaths();
-        //downloadPaths = new string[1]; // num of players obtain frm gameManager
-
-        // obtain all the download paths from the players
-        // need to iterate through player info? to obtain the download paths?
-        //for(int i = 0; i < 1; i++)
-        //{
-        //    downloadPaths[i] = uploader.GetDownloadURL();
-        //    Debug.Log("URL is " + downloadPaths[i]);
-        //    Debug.Log("set download url " + i);
-        //}
+        
 
         // default texture is set for testing
         // in actual game, the drawing from index 0 should be displayed
@@ -43,24 +31,17 @@ public class DrawingGallery : MonoBehaviour
     }
 
     
-
-    // just for testing purposes: 
-    public void Refresh()
+    // called by game manager to set the paths for gallery to use
+    public void SetDownloadPaths(Player[] players)
     {
-        string URL = uploader.GetDownloadURL();
-        if (URL != null)
+        downloadPaths = new string[players.Length];
+        for (int i = 0; i < 1; i++)
         {
-            for (int i = 0; i < 1; i++)
-            {
-                downloadPaths[i] = uploader.GetDownloadURL();
-                Debug.Log("URL is " + downloadPaths[i]);
-                Debug.Log("set download url " + i);
-            }
-        } 
-        else
-        {
-            Debug.Log("Not Ready Yet");
+            downloadPaths[i] = players[i].CustomProperties["URL"].ToString();
+            //    Debug.Log("URL is " + downloadPaths[i]);
+            Debug.Log("set download url " + i);
         }
+
     }
 
     // to be called once when the judgingUI loads (on submit)? may not work cuz it's inactive...
@@ -100,30 +81,12 @@ public class DrawingGallery : MonoBehaviour
     }
 
 
-    public void SetWinner()
-    {
-        StartCoroutine(CoSetWinner());
-
-        // maybe add animations next time if i wanna be fancy
-    }
-
-    private IEnumerator CoSetWinner()
+    public int GetWinner()
     {
         winnerIndex = drawingIndex;
-
-        // display the winning drawing
-        LoadDrawing(winnerIndex);
-
-        winnerNameText.GetComponent<TMP_Text>().text = "Player " + winnerIndex + " !"; // set to player name
-        // pop up something to show that this is the winner for this round
-        winnerPanel.SetActive(true);
-
-        yield return new WaitForSeconds(2f);
-
-        winnerPanel.SetActive(false);
-
-        // should trigger the next round... so this code should be in game manager script
+        return winnerIndex;
     }
+
 
 
 }

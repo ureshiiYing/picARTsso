@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         StartNewRound,
         SetNextHost,
         RefreshTimer,
-        OnAllSubmitted
+        OnAllSubmitted,
+        SetWinner
     }
 
     //public enum GameState
@@ -56,7 +57,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private Coroutine CoTimer;
     [SerializeField] private GameObject timerUI;
 
-    
+    // winner UI
+    [SerializeField] private GameObject winnerPanel;
+    [SerializeField] private TMP_Text winnerNameText;
+
+
 
     #endregion
 
@@ -84,6 +89,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
             case EventCodes.OnAllSubmitted:
                 OnAllSubmitted_R();
+                break;
+
+            case EventCodes.SetWinner:
+                SetWinnerOfThisRound_R(o);
                 break;
         }
     }
@@ -136,9 +145,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void OnHostDone()
     {
         wordGenerator.OnWordConfirmation();
+
         // stop the host countdown timer
         StopCoroutine(CoTimer);
-        Debug.Log(CoTimer);
 
         InitializeTimer(timeLimit);
 
@@ -176,7 +185,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // check if everyone has submitted
         if (DidAllSubmit())
         {
-            Debug.Log(CoTimer);
+            yield return new WaitForSeconds(1f);
             OnAllSubmitted_S();
         }
     }
@@ -201,12 +210,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     
-
-
-    public void SetWinnerOfThisRound()
-    {
-
-    }
+    
 
     // Check if winning condition is met
     private void ScoreCheck()
@@ -268,29 +272,29 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             RefreshTimer_S();
             CoTimer = StartCoroutine(Timer());
+            
         }
     }
 
 
-    public string[] GetArrayOfDownloadPaths()
+    public Player[] GetArrayOfPlayersWithoutHost()
     {
         Debug.Log("getting downloads");
-        int numOfPlayers = PhotonNetwork.PlayerList.Length;
-        string[] downloadPaths = new string[numOfPlayers - 1]; // exclude the host
+        int numOfPlayers = players.Length;
+        Player[] downloadPlayer = new Player[numOfPlayers - 1]; // exclude the host
         int index = 0;
 
         for(int i = 0; i < numOfPlayers; i++)
         {
             // nd to exclude host
-            if (players[i] != PhotonNetwork.PlayerList[currHost])
+            if (i != currHost)
             {
-                downloadPaths[index] = players[i].CustomProperties["URL"].ToString();
-                Debug.Log(downloadPaths[index]);
+                downloadPlayer[index] = players[i];
                 index++;
             }
         }
 
-        return downloadPaths;
+        return downloadPlayer;
     }
 
 
@@ -359,8 +363,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void OnAllSubmitted_R()
     {
         // stop the countdown
-        // StopCoroutine(CoTimer);
-        Debug.Log("all submit" + CoTimer);
+        if (CoTimer != null)
+        {
+            StopCoroutine(CoTimer);
+        }
+        timerUI.SetActive(false);
+
+        judgingUI.GetComponent<DrawingGallery>().SetDownloadPaths(GetArrayOfPlayersWithoutHost());
 
         // load everyone into the judging scene
         waitingRoom.SetActive(false);
@@ -376,6 +385,46 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             pickPanel.SetActive(false);
         }
     }
+
+    // call from pick this button
+    public void SetWinnerOfThisRound_S()
+    {
+        int winnerIndex = judgingUI.GetComponent<DrawingGallery>().GetWinner();
+        object[] package = new object[] { winnerIndex };
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.SetWinner,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void SetWinnerOfThisRound_R(object[] data)
+    {
+        int winnerIndex = (int)data[0];
+        StartCoroutine(CoSetWinner(winnerIndex));
+    }
+
+    private IEnumerator CoSetWinner(int winnerIndex)
+    {
+        // display the winning drawing
+        judgingUI.GetComponent<DrawingGallery>().LoadDrawing(winnerIndex);
+
+        Player[] players = GetArrayOfPlayersWithoutHost();
+
+        winnerNameText.GetComponent<TMP_Text>().text = players[winnerIndex].NickName + " !"; // set to player name
+        
+        // pop up something to show that this is the winner for this round
+        winnerPanel.SetActive(true);
+
+        yield return new WaitForSeconds(2f);
+
+        winnerPanel.SetActive(false);
+
+        // should trigger the next round... so this code should be in game manager script
+    }
+
 
 
     #endregion
