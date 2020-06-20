@@ -82,9 +82,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 StartNewRound_R();
                 break;
 
-            //case EventCodes.SetNextHost:
-            //    SetNextHost_R(o);
-            //    break;
+            case EventCodes.SetNextHost:
+                SetNextHost_R();
+                break;
 
             case EventCodes.RefreshTimer:
                 RefreshTimer_R(o);
@@ -225,19 +225,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     }
 
-    // TODO: make everyone call this
-    public void SetNextHost() //int hostIndex)
-    {
-        int numOfPlayers = PhotonNetwork.PlayerList.Length;
-        if (currHost == (numOfPlayers - 1))
-        {
-            currHost = 0;
-        }
-        else
-        {
-            currHost += 1;
-        }
-    }
+    
 
     private void EndGame()
     {
@@ -323,7 +311,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void StartNewRound_R()
     {
-        // supp to clear all drawings, redirect normal players to waiting room and host to host room
+        // change back to original settings
+        judgingUI.SetActive(false);
+
+        // redirect normal players to waiting room and host to host room
         // redirect the players
         if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
         {
@@ -450,7 +441,35 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         // set score
         scoreboard.IncrementScore(players[winnerIndex]);
+
+        // change host first
+        SetNextHost_S();
+
         // should trigger the next round... so this code should be in game manager script
+        StartNewRound_S();
+    }
+
+    public void SetNextHost_S()
+    {
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.SetNextHost,
+            null,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void SetNextHost_R() //int hostIndex)
+    {
+        int numOfPlayers = PhotonNetwork.PlayerList.Length;
+        if (currHost == (numOfPlayers - 1))
+        {
+            currHost = 0;
+        }
+        else
+        {
+            currHost += 1;
+        }
     }
 
 

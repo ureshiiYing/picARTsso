@@ -1355,6 +1355,7 @@ MonoBehaviour:
   drawingUI: {fileID: 1432198886}
   judgingUI: {fileID: 485726114}
   pickPanel: {fileID: 1597805249}
+  scoreboard: {fileID: 1699790630}
   timerUI: {fileID: 1997703822}
   winnerPanel: {fileID: 365776832}
   winnerNameText: {fileID: 1112564471}

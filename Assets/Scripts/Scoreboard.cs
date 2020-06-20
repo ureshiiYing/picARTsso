@@ -75,7 +75,6 @@ public class Scoreboard : MonoBehaviour
         {
             for (int j = i; j < len; j ++)
             {
-                Debug.Log("sort" + PhotonNetwork.LocalPlayer.CustomProperties["Score"]);
                 int tempScore = (int)players[j].CustomProperties["Score"];
                 if (tempScore > currScore)
                 {
@@ -109,7 +108,6 @@ public class Scoreboard : MonoBehaviour
 
     public void ListScore()
     {
-        Debug.Log("list" + PhotonNetwork.LocalPlayer.CustomProperties["Score"]);
         Player[] players = SortByScore();
         foreach (Player player in players)
         {
@@ -125,14 +123,12 @@ public class Scoreboard : MonoBehaviour
     {
         Toggle submissionStatus = null;
 
-        // get the ith position of the player in the sorted player array
-        int index = 0;
+        // find the ith position of the player in the sorted player array
         for (int i = 0; i < sortedPlayers.Length; i++)
         {
             if (sortedPlayers[i] == player)
             {
-                index = i;
-                submissionStatus = scoreContainer.GetChild(i).gameObject.transform.GetComponentInChildren<Toggle>();
+                submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
             }
         }
 

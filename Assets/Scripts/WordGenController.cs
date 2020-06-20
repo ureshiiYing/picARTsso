@@ -64,7 +64,7 @@ public class WordGenController : MonoBehaviour
     {
         waitingPanel.SetActive(false);
         playerPanel.SetActive(true);
-        drawingWordsDisplay.GetComponent<TMP_Text>().text += wordToDisplay;
+        drawingWordsDisplay.GetComponent<TMP_Text>().text = "Topics: " + wordToDisplay;
         //start and sync timer
     }
 }
