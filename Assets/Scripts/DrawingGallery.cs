@@ -86,7 +86,7 @@ public class DrawingGallery : MonoBehaviour
         }
 
         // if within player number limits
-        if (drawingIndex >= 0 && drawingIndex < 1) // instead of 1 should be player numbers
+        if (drawingIndex >= 0 && drawingIndex < (Photon.Pun.PhotonNetwork.PlayerList.Length - 1))
         {
             LoadDrawing(drawingIndex);
         }

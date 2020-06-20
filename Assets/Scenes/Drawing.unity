@@ -1785,7 +1785,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6f1c6208e71cba49b5685b898af51d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 383257168}
   uploader: {fileID: 1958433593}
   defaultTexture: {fileID: 2800000, guid: 9f058f25e8e2d47cfb894951d4d7e48a, type: 3}
   winnerPanel: {fileID: 365776832}

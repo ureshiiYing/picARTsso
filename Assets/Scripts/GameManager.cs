@@ -138,6 +138,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         wordGenerator.OnWordConfirmation();
         // stop the host countdown timer
         StopCoroutine(CoTimer);
+        Debug.Log(CoTimer);
 
         InitializeTimer(timeLimit);
 
@@ -175,6 +176,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // check if everyone has submitted
         if (DidAllSubmit())
         {
+            Debug.Log(CoTimer);
             OnAllSubmitted_S();
         }
     }
@@ -272,16 +274,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public string[] GetArrayOfDownloadPaths()
     {
+        Debug.Log("getting downloads");
         int numOfPlayers = PhotonNetwork.PlayerList.Length;
         string[] downloadPaths = new string[numOfPlayers - 1]; // exclude the host
+        int index = 0;
 
         for(int i = 0; i < numOfPlayers; i++)
         {
             // nd to exclude host
-            if (PhotonNetwork.LocalPlayer != PhotonNetwork.PlayerList[currHost])
+            if (players[i] != PhotonNetwork.PlayerList[currHost])
             {
-                downloadPaths[i] = players[i].CustomProperties["URL"].ToString();
-                Debug.Log(downloadPaths[i]);
+                downloadPaths[index] = players[i].CustomProperties["URL"].ToString();
+                Debug.Log(downloadPaths[index]);
+                index++;
             }
         }
 
@@ -354,7 +359,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void OnAllSubmitted_R()
     {
         // stop the countdown
-        StopCoroutine(CoTimer);
+        // StopCoroutine(CoTimer);
+        Debug.Log("all submit" + CoTimer);
 
         // load everyone into the judging scene
         waitingRoom.SetActive(false);
