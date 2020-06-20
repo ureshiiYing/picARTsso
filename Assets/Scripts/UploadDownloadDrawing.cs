@@ -80,6 +80,8 @@ public class UploadDownloadDrawing : MonoBehaviour
             yield break;
         }
 
+        // clear all drawings
+        FindObjectOfType<DrawManager>().Clear();
 
         // no error continue to get a download url ==> technically not necessary for this game.
         // can keep this part for the save function

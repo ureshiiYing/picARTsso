@@ -1045,8 +1045,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 485726119}
-        m_MethodName: SetWinner
+      - m_Target: {fileID: 383257168}
+        m_MethodName: SetWinnerOfThisRound_S
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1362,6 +1362,8 @@ MonoBehaviour:
   judgingUI: {fileID: 485726114}
   pickPanel: {fileID: 1597805249}
   timerUI: {fileID: 1997703822}
+  winnerPanel: {fileID: 365776832}
+  winnerNameText: {fileID: 1112564471}
 --- !u!4 &383257169
 Transform:
   m_ObjectHideFlags: 0
@@ -1785,11 +1787,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6f1c6208e71cba49b5685b898af51d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 383257168}
   uploader: {fileID: 1958433593}
   defaultTexture: {fileID: 2800000, guid: 9f058f25e8e2d47cfb894951d4d7e48a, type: 3}
-  winnerPanel: {fileID: 365776832}
-  winnerNameText: {fileID: 1112564471}
 --- !u!1 &586176525
 GameObject:
   m_ObjectHideFlags: 0
@@ -7504,6 +7503,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202212551733998391, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9202212551771677740, guid: c72f2fdff984d4db5876e4ba64b15520,
         type: 3}

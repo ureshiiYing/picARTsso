@@ -422,6 +422,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         winnerPanel.SetActive(false);
 
+        // set score
+
         // should trigger the next round... so this code should be in game manager script
     }
 
