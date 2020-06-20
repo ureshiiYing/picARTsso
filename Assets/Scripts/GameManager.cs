@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         StartNewRound,
         SetNextHost,
         RefreshTimer,
+        OnSubmitToggle,
         OnAllSubmitted,
         SetWinner
     }
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private GameObject drawingUI;
     [SerializeField] private GameObject judgingUI;
     [SerializeField] private GameObject pickPanel;
+    [SerializeField] private Scoreboard scoreboard;
 
     // timer stuff
     private int currTime;
@@ -85,6 +88,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
             case EventCodes.RefreshTimer:
                 RefreshTimer_R(o);
+                break;
+
+            case EventCodes.OnSubmitToggle:
+                OnSubmitToggle_R(o);
                 break;
 
             case EventCodes.OnAllSubmitted:
@@ -167,8 +174,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // set player's bool hasSubmitted
         StartCoroutine(CoSubmission());
 
-        //change scoreboard toggle => to be implemented after implementing scoreboard behaviour
-
+        //sync the scoreboard
+        OnSubmitToggle_S(PhotonNetwork.LocalPlayer);
         
 
     }
@@ -350,6 +357,25 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         RefreshTimerUI();
     }
 
+    public void OnSubmitToggle_S(Player player)
+    {
+        object[] package = new object[] { player };
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.OnSubmitToggle,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void OnSubmitToggle_R(object[] data)
+    {
+        Player player = (Player)data[0];
+        //change scoreboard toggle => to be implemented after implementing scoreboard behaviour
+        scoreboard.ToggleSubmissionStatus(player);
+    }
+
     public void OnAllSubmitted_S()
     {
         PhotonNetwork.RaiseEvent(
@@ -423,7 +449,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         winnerPanel.SetActive(false);
 
         // set score
-
+        scoreboard.IncrementScore(players[winnerIndex]);
         // should trigger the next round... so this code should be in game manager script
     }
 

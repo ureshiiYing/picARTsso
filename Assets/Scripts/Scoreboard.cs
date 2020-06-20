@@ -13,6 +13,8 @@ public class Scoreboard : MonoBehaviour
     [SerializeField]
     private GameObject scoreListingPrefab;
 
+    private Player[] sortedPlayers;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,17 +24,33 @@ public class Scoreboard : MonoBehaviour
             StartCoroutine(CoScore(player));
         }
         StartCoroutine(CoRefresh());
+
     }
 
     private IEnumerator CoScore(Player player)
     {
-        Debug.Log("1st" + PhotonNetwork.LocalPlayer.CustomProperties["Score"]);
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         playerOps.Add("Score", 0);
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
-        Debug.Log("2nd" + PhotonNetwork.LocalPlayer.CustomProperties["Score"]);
     }
+
+    public void IncrementScore(Player player)
+    {
+        StartCoroutine(CoIncrementScore(player));
+    }
+
+    private IEnumerator CoIncrementScore(Player player)
+    {
+        ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
+        playerOps.Add("Score", (int)player.CustomProperties["Score"] + 1);
+        player.SetCustomProperties(playerOps);
+        yield return new WaitForSeconds(1f);
+
+        // refresh the scoreboard
+        StartCoroutine(CoRefresh());
+    }
+
 
     private IEnumerator CoRefresh()
     {
@@ -70,6 +88,8 @@ public class Scoreboard : MonoBehaviour
             players[i] = players[currIndex];
             players[currIndex] = temp;
         }
+
+        sortedPlayers = players;
         return players;
     }
 
@@ -100,4 +120,32 @@ public class Scoreboard : MonoBehaviour
             nameText.text = player.NickName.ToString();
         }
     }
+
+    public void ToggleSubmissionStatus(Player player)
+    {
+        Toggle submissionStatus = null;
+
+        // get the ith position of the player in the sorted player array
+        int index = 0;
+        for (int i = 0; i < sortedPlayers.Length; i++)
+        {
+            if (sortedPlayers[i] == player)
+            {
+                index = i;
+                submissionStatus = scoreContainer.GetChild(i).gameObject.transform.GetComponentInChildren<Toggle>();
+            }
+        }
+
+
+        if (submissionStatus != null)
+        {
+            bool isActive = submissionStatus.isOn;
+            submissionStatus.isOn = !isActive;
+        }
+        else
+        {
+            Debug.LogError("please set submission toggle");
+        }
+    }
+
 }
