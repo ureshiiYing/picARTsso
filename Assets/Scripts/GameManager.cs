@@ -319,6 +319,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
         {
             hostPanel.SetActive(true);
+            waitingRoom.SetActive(false);   
         }
         else
         {
@@ -442,11 +443,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // set score
         scoreboard.IncrementScore(players[winnerIndex]);
 
-        // change host first
-        SetNextHost_S();
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // change host first
+            SetNextHost_S();
 
-        // should trigger the next round... so this code should be in game manager script
-        StartNewRound_S();
+            Debug.Log("starting new round");
+
+            // should trigger the next round... so this code should be in game manager script
+            StartNewRound_S();
+        }
     }
 
     public void SetNextHost_S()
@@ -462,7 +468,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void SetNextHost_R() //int hostIndex)
     {
         int numOfPlayers = PhotonNetwork.PlayerList.Length;
-        if (currHost == (numOfPlayers - 1))
+        if (currHost >= (numOfPlayers - 1))
         {
             currHost = 0;
         }
@@ -470,6 +476,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             currHost += 1;
         }
+        Debug.Log(currHost + " " + players[currHost].NickName);
     }
 
 
