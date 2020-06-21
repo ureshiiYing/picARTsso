@@ -12,7 +12,7 @@ public class DrawingGallery : MonoBehaviour
     public Texture2D defaultTexture;
 
     private string[] downloadPaths;
-    private int drawingIndex = -1;
+    private int drawingIndex = 0;
     private int winnerIndex = -1;
     
     
@@ -20,14 +20,17 @@ public class DrawingGallery : MonoBehaviour
     // Start is called before the first frame update
     public void OnEnable()
     {
+        drawingIndex = 0;
+        winnerIndex = -1;
         // judging screen is only loaded after everyone has submitted
 
         // obtain the downloadPaths from the game manager
-        
+
 
         // default texture is set for testing
         // in actual game, the drawing from index 0 should be displayed
-        uploader.SetDisplay(defaultTexture);
+        // uploader.SetDisplay(defaultTexture);
+        LoadDrawing(drawingIndex);
         
     }
 
@@ -36,7 +39,7 @@ public class DrawingGallery : MonoBehaviour
     public void SetDownloadPaths(Player[] players)
     {
         downloadPaths = new string[players.Length];
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < players.Length; i++)
         {
             downloadPaths[i] = players[i].CustomProperties["URL"].ToString();
             //    Debug.Log("URL is " + downloadPaths[i]);
@@ -62,21 +65,29 @@ public class DrawingGallery : MonoBehaviour
         else if (value == 1)
         {
             drawingIndex += 1;
-        } else
+        } 
+        else
         {
             Debug.Log("wrong value: " + value);
         }
 
-        // if within player number limits
-        if (drawingIndex >= 0 && drawingIndex < (Photon.Pun.PhotonNetwork.PlayerList.Length - 1))
+        // if outside player number limits
+        if (drawingIndex < 0)
         {
-            LoadDrawing(drawingIndex);
+            drawingIndex = Photon.Pun.PhotonNetwork.PlayerList.Length - 1;
         }
         // else display a default drawing
+        else if (drawingIndex > Photon.Pun.PhotonNetwork.PlayerList.Length - 1)
+        {
+            // warp back?
+            drawingIndex = 0;          
+        }
         else
         {
+            Debug.Log("sth wrong");
             uploader.SetDisplay(defaultTexture);
         }
+        LoadDrawing(drawingIndex);
 
         Debug.Log("showing: " + drawingIndex);
     }
