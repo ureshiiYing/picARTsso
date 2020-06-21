@@ -71,22 +71,28 @@ public class DrawingGallery : MonoBehaviour
             Debug.Log("wrong value: " + value);
         }
 
-        // if outside player number limits
+        // if within player number limits
+        //if (drawingIndex >= 0 && drawingIndex < Photon.Pun.PhotonNetwork.PlayerList.Length)
+        //{
+        //    LoadDrawing(drawingIndex);
+        //}
+        //else 
         if (drawingIndex < 0)
         {
             drawingIndex = Photon.Pun.PhotonNetwork.PlayerList.Length - 1;
         }
         // else display a default drawing
-        else if (drawingIndex > Photon.Pun.PhotonNetwork.PlayerList.Length - 1)
+        else if (drawingIndex >= Photon.Pun.PhotonNetwork.PlayerList.Length)
         {
             // warp back?
-            drawingIndex = 0;          
+            drawingIndex = 0;
         }
         else
         {
             Debug.Log("sth wrong");
             uploader.SetDisplay(defaultTexture);
         }
+
         LoadDrawing(drawingIndex);
 
         Debug.Log("showing: " + drawingIndex);
