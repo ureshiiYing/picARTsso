@@ -18,15 +18,6 @@ public class WordGenController : MonoBehaviour
     [SerializeField]
     private InputField playerWord;
 
-    [SerializeField]
-    private GameObject playerPanel;
-    [SerializeField]
-    private GameObject waitingPanel;
-    [SerializeField]
-    private GameObject hostPanel;
-
-    [SerializeField]
-    private TMP_Text drawingWordsDisplay;
     private string hostWord;
 
     // Start is called before the first frame update
@@ -47,26 +38,15 @@ public class WordGenController : MonoBehaviour
         wordDisplay.text = wordForTheRound;
     }
 
-    public void OnWordConfirmation() // send to everyone, set word in drawing canvas
+    public string GetWord()
     {
         //clear text of player input
         hostWord = playerWord.text;
         playerWord.text = "";
-        PhotonView photonView = PhotonView.Get(this);
-        photonView.RPC("StartDrawing", RpcTarget.Others, wordDisplay.text + " + " + hostWord);
-        // host goes to waiting
-        hostPanel.SetActive(false);
-        waitingPanel.SetActive(true);
-        // generate another word to use for next time
+        string word = wordDisplay.text + " + " + hostWord;
         GenerateWord();
+        return word;
     }
 
-    [PunRPC]
-    public void StartDrawing(string wordToDisplay)
-    {
-        waitingPanel.SetActive(false);
-        playerPanel.SetActive(true);
-        drawingWordsDisplay.GetComponent<TMP_Text>().text = "Topics: " + wordToDisplay;
-        //start and sync timer
-    }
+
 }
