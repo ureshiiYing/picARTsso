@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         StartNewRound,
         SetNextHost,
         RefreshTimer,
+        OnWordConfirmation,
         OnSubmitToggle,
         OnAllSubmitted,
         SetWinner
@@ -58,6 +59,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private GameObject pickPanel;
     [SerializeField] private Scoreboard scoreboard;
 
+    // drawing stuff
+    [SerializeField] private TMP_Text drawingWordsDisplay;
+
     // timer stuff
     private int currTime;
     private Coroutine CoTimer;
@@ -91,6 +95,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
             case EventCodes.RefreshTimer:
                 RefreshTimer_R(o);
+                break;
+
+            case EventCodes.OnWordConfirmation:
+                OnWordConfirmation_R(o);
                 break;
 
             case EventCodes.OnSubmitToggle:
@@ -156,16 +164,20 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     // called by the oui button
     public void OnHostDone()
-    {
-        wordGenerator.OnWordConfirmation();
+    { 
+        OnWordConfirmation_S();
+
+        // change the view
+        hostPanel.SetActive(false);
+        waitingRoom.SetActive(true);
 
         // stop the host countdown timer
         StopCoroutine(CoTimer);
 
         InitializeTimer(timeLimit);
-
-        
     }
+
+
 
     // save the upload string, update player status
     // called by the submit button on drawing UI
@@ -407,6 +419,32 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    public void OnWordConfirmation_S()
+    {
+        string wordsToDisplay = wordGenerator.GetWord();
+        state = GameState.PlayerPlaying;
+
+        object[] package = new object[] { wordsToDisplay };
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.OnWordConfirmation,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.Others },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void OnWordConfirmation_R(object[] data)
+    {
+        string wordToDisplay = (string)data[0];
+
+        waitingRoom.SetActive(false);
+        drawingUI.SetActive(true);
+
+        drawingWordsDisplay.GetComponent<TMP_Text>().text = "Topics: " + wordToDisplay;
+
+        state = GameState.PlayerPlaying;
+    }
 
     public void OnSubmitToggle_S(Player player)
     {

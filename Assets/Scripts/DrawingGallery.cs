@@ -15,6 +15,7 @@ public class DrawingGallery : MonoBehaviour
     private int drawingIndex = -1;
     private int winnerIndex = -1;
     
+    
 
     // Start is called before the first frame update
     public void OnEnable()
