@@ -35,12 +35,12 @@ public class Scoreboard : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    public void IncrementScore(Player player)
-    {
-        StartCoroutine(CoIncrementScore(player));
-    }
+    //public void IncrementScore(Player player)
+    //{
+    //    StartCoroutine(CoIncrementScore(player));
+    //}
 
-    private IEnumerator CoIncrementScore(Player player)
+    public IEnumerator CoIncrementScore(Player player)
     {
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         playerOps.Add("Score", (int)player.CustomProperties["Score"] + 1);

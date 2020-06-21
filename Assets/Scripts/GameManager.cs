@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         OnWordConfirmation,
         OnSubmitToggle,
         OnAllSubmitted,
-        SetWinner
+        SetWinner,
+        EndGame
     }
 
     public enum GameState
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private GameObject judgingUI;
     [SerializeField] private GameObject pickPanel;
     [SerializeField] private Scoreboard scoreboard;
+    [SerializeField] private GameObject endingUI;
 
     // drawing stuff
     [SerializeField] private TMP_Text drawingWordsDisplay;
@@ -112,6 +114,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             case EventCodes.SetWinner:
                 SetWinnerOfThisRound_R(o);
                 break;
+
+            case EventCodes.EndGame:
+                EndGame_R(o);
+                break;
         }
     }
 
@@ -165,6 +171,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     // called by skip button
     // called when auto skip
+    public void OnHostSkip()
+    {
+        wordGenerator.GenerateWord();
+        TriggerNextRound();
+    }
+
     // called when the round ends
     public void TriggerNextRound()
     {
@@ -249,18 +261,29 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return true;
     }
 
-    
-    
 
-    // Check if winning condition is met
-    private void ScoreCheck()
+
+
+    // Check if winning condition is met after each round
+    private void ScoreCheck(Player player)
     {
-
+        int score = (int)player.CustomProperties["Score"];
+        if (score >= numOfPointsToWin)
+        {
+            state = GameState.Ending;
+            EndGame_S(player);
+        } 
+        else
+        {
+            // should trigger the next round... 
+            TriggerNextRound();
+        }
     }
 
+
     
 
-    private void EndGame()
+    public void PlayAgain()
     {
 
     }
@@ -399,7 +422,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             if (state == GameState.HostPlaying)
             {
                 // if the host did not manage to input in time, automatically skipped.
-                TriggerNextRound();
+                OnHostSkip();
             }
             else if (state == GameState.PlayerPlaying)
             {
@@ -499,6 +522,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // load everyone into the judging scene
         waitingRoom.SetActive(false);
         judgingUI.SetActive(true);
+        state = GameState.Judging;
 
         // only host can see pick button
         if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
@@ -550,11 +574,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         winnerPanel.SetActive(false);
 
         // set score
-        scoreboard.IncrementScore(drawingPlayers[winnerIndex]);
+        yield return StartCoroutine(scoreboard.CoIncrementScore(drawingPlayers[winnerIndex]));
 
-        
-        // should trigger the next round... 
-        TriggerNextRound();
+        // check if there is a winner otherwise
+        ScoreCheck(drawingPlayers[winnerIndex]);
+
     }
 
     public void SetNextHost_S()
@@ -581,7 +605,29 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Debug.Log(currHost + " " + players[currHost].NickName);
     }
 
+    public void EndGame_S(Player player)
+    {
+        object[] package = new object[] { player };
 
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.EndGame,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    private void EndGame_R(object[] data)
+    {
+        Player player = (Player)data[0];
+
+        judgingUI.SetActive(false);
+        endingUI.SetActive(true);
+        Debug.Log("Game Ended");
+
+        // display winner
+        Debug.Log(player.NickName + " wins !");
+    }
 
     #endregion
 }
