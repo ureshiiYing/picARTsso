@@ -162,22 +162,25 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     }
 
-    // called by the oui button
-    public void OnHostDone()
-    { 
-        OnWordConfirmation_S();
 
-        // change the view
-        hostPanel.SetActive(false);
-        waitingRoom.SetActive(true);
+    // called by skip button
+    // called when auto skip
+    // called when the round ends
+    public void TriggerNextRound()
+    {
+        // only host can call this
+        if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
+        {
+            // change host first
+            SetNextHost_S();
 
-        // stop the host countdown timer
-        StopCoroutine(CoTimer);
 
-        InitializeTimer(timeLimit);
+            Debug.Log("starting new round");
+
+
+            StartNewRound_S();
+        }
     }
-
-
 
     // save the upload string, update player status
     // called by the submit button on drawing UI
@@ -246,21 +249,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return true;
     }
 
-    public void TriggerNextRound()
-    {
-        // only master client can call this
-        if (PhotonNetwork.IsMasterClient)
-        {
-            // change host first
-            SetNextHost_S();
-            
-
-            Debug.Log("starting new round");
-
-
-            StartNewRound_S();
-        }
-    }
+    
     
 
     // Check if winning condition is met
@@ -276,6 +265,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     }
 
+    // used to initialise and reinitialise timer
     private void InitializeTimer(int time)
     {
         currTime = time;
@@ -283,6 +273,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (PhotonNetwork.IsMasterClient)
         {
+            if (CoTimer != null)
+            {
+                StopCoroutine(CoTimer);
+                CoTimer = null;
+            }
             CoTimer = StartCoroutine(Timer());
         }
     }
@@ -422,26 +417,41 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void OnWordConfirmation_S()
     {
         string wordsToDisplay = wordGenerator.GetWord();
-        state = GameState.PlayerPlaying;
 
         object[] package = new object[] { wordsToDisplay };
 
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.OnWordConfirmation,
             package,
-            new RaiseEventOptions { Receivers = ReceiverGroup.Others },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All },
             new SendOptions { Reliability = true }
         );
     }
 
     public void OnWordConfirmation_R(object[] data)
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // stop the host countdown timer
+            InitializeTimer(timeLimit);
+        }
+
         string wordToDisplay = (string)data[0];
 
-        waitingRoom.SetActive(false);
-        drawingUI.SetActive(true);
+        // transition drawing players to drawingUI
+        if (PhotonNetwork.LocalPlayer != PhotonNetwork.PlayerList[currHost])
+        {
+            waitingRoom.SetActive(false);
+            drawingUI.SetActive(true);
 
-        drawingWordsDisplay.GetComponent<TMP_Text>().text = "Topics: " + wordToDisplay;
+            drawingWordsDisplay.GetComponent<TMP_Text>().text = "Topics: " + wordToDisplay;
+        }
+        else 
+        {
+            // transition host to waitingRoom
+            hostPanel.SetActive(false);
+            waitingRoom.SetActive(true);
+        }
 
         state = GameState.PlayerPlaying;
     }
@@ -557,7 +567,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         );
     }
 
-    public void SetNextHost_R() //int hostIndex)
+    public void SetNextHost_R() 
     {
         int numOfPlayers = PhotonNetwork.PlayerList.Length;
         if (currHost >= (numOfPlayers - 1))

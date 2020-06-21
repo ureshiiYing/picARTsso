@@ -1356,6 +1356,7 @@ MonoBehaviour:
   judgingUI: {fileID: 485726114}
   pickPanel: {fileID: 1597805249}
   scoreboard: {fileID: 1699790630}
+  drawingWordsDisplay: {fileID: 586176527}
   timerUI: {fileID: 1997703822}
   winnerPanel: {fileID: 365776832}
   winnerNameText: {fileID: 1112564471}
@@ -6882,40 +6883,12 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1770096477}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1770096479}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85a070c675de0497691b6c925d57ae88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1770096479 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6305398419545204755, guid: f24b8088ac2fb47b981fadc7894aed58,
-    type: 3}
-  m_PrefabInstance: {fileID: 1770096477}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1770096480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1770096479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 0
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
-  viewIdField: 1
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &1892766152
 GameObject:
   m_ObjectHideFlags: 0
@@ -7669,6 +7642,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 383257168}
+    - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggerNextRound
+      objectReference: {fileID: 0}
+    - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 9202212550202311283, guid: c72f2fdff984d4db5876e4ba64b15520,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7792,7 +7795,7 @@ PrefabInstance:
     - target: {fileID: 9202212551053249181, guid: c72f2fdff984d4db5876e4ba64b15520,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnHostDone
+      value: OnWordConfirmation_S
       objectReference: {fileID: 0}
     - target: {fileID: 9202212551733998390, guid: c72f2fdff984d4db5876e4ba64b15520,
         type: 3}
