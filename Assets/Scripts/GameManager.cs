@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -19,14 +20,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         SetWinner
     }
 
-    //public enum GameState
-    //{
-    //    Starting = 0,
-    //    HostPlaying = 1, // part when host inputting and player waiting is occuring
-    //    PlayerPlaying = 2, // part when host waits and player is drawing
-    //    Judging = 3,
-    //    Ending = 4
-    //}
+    public enum GameState
+    {
+        Starting = 0,
+        HostPlaying = 1, // part when host inputting and player waiting is occuring
+        PlayerPlaying = 2, // part when host waits and player is drawing
+        Judging = 3,
+        Ending = 4
+    }
 
 
 
@@ -40,6 +41,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private int timeLimit;
     private int hostTimeLimit = 30;
     private int numOfPointsToWin;
+
+    private GameState state;
 
     // fields for recording players
     private static Player[] players;
@@ -137,6 +140,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         players = PhotonNetwork.PlayerList;
         
         currHost = 0;
+
+        state = GameState.Starting;
         // other method involving actor number
         //for (int i = 0; i < numOfPlayers; i++)
         //{
@@ -149,6 +154,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     }
 
+    // called by the oui button
     public void OnHostDone()
     {
         wordGenerator.OnWordConfirmation();
@@ -162,6 +168,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     // save the upload string, update player status
+    // called by the submit button on drawing UI
     public void OnSubmit()
     {
         // upload and saves the drawing
@@ -197,6 +204,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    private IEnumerator CoResetSubmissionStatus()
+    {
+        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
+        playerProps.Add("hasSubmitted", false);
+        Debug.Log("added");
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
+
+        yield return new WaitForSeconds(1f);
+
+    }
+
     private bool DidAllSubmit()
     {
         foreach(Player player in PhotonNetwork.PlayerList)
@@ -216,7 +234,21 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return true;
     }
 
-    
+    public void TriggerNextRound()
+    {
+        // only master client can call this
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // change host first
+            SetNextHost_S();
+            
+
+            Debug.Log("starting new round");
+
+
+            StartNewRound_S();
+        }
+    }
     
 
     // Check if winning condition is met
@@ -260,8 +292,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (currTime < 0) 
         {
             CoTimer = null;
+            
+            // stop the timer
             yield break;
-            // end the game...
+
         }
         else
         {
@@ -313,6 +347,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         // change back to original settings
         judgingUI.SetActive(false);
+        timerUI.SetActive(true);
+        state = GameState.HostPlaying;
+        // reset the submission status
+        StartCoroutine(CoResetSubmissionStatus());
 
         // redirect normal players to waiting room and host to host room
         // redirect the players
@@ -323,6 +361,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
         else
         {
+            hostPanel.SetActive(false);
             waitingRoom.SetActive(true);
         }
 
@@ -347,7 +386,27 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         currTime = (int)data[0];
         RefreshTimerUI();
+        Debug.Log(currTime);
+        if (currTime <= 0)
+        {
+            if (state == GameState.HostPlaying)
+            {
+                // if the host did not manage to input in time, automatically skipped.
+                TriggerNextRound();
+            }
+            else if (state == GameState.PlayerPlaying)
+            {
+                // player ran out of time to draw, force submit
+                if (!(bool)PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"] 
+                    && PhotonNetwork.LocalPlayer != players[currHost])
+                {
+                    // if hasnt submit and not the host
+                    OnSubmit();
+                }
+            }
+        }
     }
+
 
     public void OnSubmitToggle_S(Player player)
     {
@@ -407,6 +466,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // call from pick this button
     public void SetWinnerOfThisRound_S()
     {
+        pickPanel.SetActive(false);
+
         int winnerIndex = judgingUI.GetComponent<DrawingGallery>().GetWinner();
         object[] package = new object[] { winnerIndex };
 
@@ -429,9 +490,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // display the winning drawing
         judgingUI.GetComponent<DrawingGallery>().LoadDrawing(winnerIndex);
 
-        Player[] players = GetArrayOfPlayersWithoutHost();
+        Player[] drawingPlayers = GetArrayOfPlayersWithoutHost();
 
-        winnerNameText.GetComponent<TMP_Text>().text = players[winnerIndex].NickName + " !"; // set to player name
+        winnerNameText.GetComponent<TMP_Text>().text = drawingPlayers[winnerIndex].NickName + " !"; // set to player name
         
         // pop up something to show that this is the winner for this round
         winnerPanel.SetActive(true);
@@ -441,18 +502,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         winnerPanel.SetActive(false);
 
         // set score
-        scoreboard.IncrementScore(players[winnerIndex]);
+        scoreboard.IncrementScore(drawingPlayers[winnerIndex]);
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            // change host first
-            SetNextHost_S();
-
-            Debug.Log("starting new round");
-
-            // should trigger the next round... so this code should be in game manager script
-            StartNewRound_S();
-        }
+        
+        // should trigger the next round... 
+        TriggerNextRound();
     }
 
     public void SetNextHost_S()
