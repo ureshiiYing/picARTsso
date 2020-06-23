@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: d8c18d1c44ef04d4a95e1c054c4f4b06
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Carrinady
+  fontNames:
+  - Carrinady
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 6444cf2666617494ab9a16cb66e8d650, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

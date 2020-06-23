@@ -55,11 +55,20 @@ public class UploadDownloadDrawing : MonoBehaviour
         // create a storage ref
         var storage = FirebaseStorage.DefaultInstance;
         string roomName = PhotonNetwork.CurrentRoom.Name;
-        string filePath = $"/{roomName}/{Guid.NewGuid()}.png";
+        string filePath;
+        // if a photon room exists
+        if (roomName != null)
+        {
+            //create a new folder for each game room-- > require a game room id instead of drawings
+            filePath = $"/{roomName}/{Guid.NewGuid()}.png";
+        }
+        else
+        {
+            filePath = $"/drawings/{Guid.NewGuid()}.png";
+        }
         Debug.Log(filePath);
         var screenshotRef = storage.GetReference(filePath);   
-        // TODO: perhaps can create a new folder for each game room --> require a game room id instead of drawings
-
+        
         // convert texture2d into bytes
         var bytes = screenshot.EncodeToPNG();
         // add any metadata relevant
@@ -116,7 +125,6 @@ public class UploadDownloadDrawing : MonoBehaviour
         Debug.Log("added");
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
 
-        // to discuss: if we rly nd to wait
         yield return new WaitForSeconds(1f);
         
         Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties["URL"].ToString());
@@ -124,7 +132,6 @@ public class UploadDownloadDrawing : MonoBehaviour
 
     public string GetDownloadURL()
     {
-        Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties["URL"].ToString());
         return downloadURL;
     }
 
@@ -169,7 +176,10 @@ public class UploadDownloadDrawing : MonoBehaviour
 
     public void SetDisplay(Texture2D texture)
     {
-        display.GetComponent<RawImage>().texture = texture;
+        if (texture != null)
+        {
+            display.GetComponent<RawImage>().texture = texture;
+        }
     }
 
     public void DeleteDrawing(string path)

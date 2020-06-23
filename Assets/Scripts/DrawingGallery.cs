@@ -14,22 +14,15 @@ public class DrawingGallery : MonoBehaviour
     private string[] downloadPaths;
     private int drawingIndex = 0;
     private int winnerIndex = -1;
-    
-    
 
-    // Start is called before the first frame update
+
+    // judging screen is only loaded after everyone has submitted
     public void OnEnable()
     {
         drawingIndex = 0;
         winnerIndex = -1;
-        // judging screen is only loaded after everyone has submitted
-
-        // obtain the downloadPaths from the game manager
-
-
-        // default texture is set for testing
+        
         // in actual game, the drawing from index 0 should be displayed
-        // uploader.SetDisplay(defaultTexture);
         LoadDrawing(drawingIndex);
         
     }
@@ -42,19 +35,20 @@ public class DrawingGallery : MonoBehaviour
         for (int i = 0; i < players.Length; i++)
         {
             downloadPaths[i] = players[i].CustomProperties["URL"].ToString();
-            //    Debug.Log("URL is " + downloadPaths[i]);
+            //Debug.Log("URL is " + downloadPaths[i]);
             Debug.Log("set download url " + i);
         }
 
     }
 
-    // to be called once when the judgingUI loads (on submit)? may not work cuz it's inactive...
+    // to be called once when the judgingUI loads
     public void LoadDrawing(int index)
     {
         uploader.DownloadDrawing(downloadPaths[index]);
     }
+    
 
-    // can combine these two into one function
+    // 0 to go left, 1 to go right
     public void ToggleDrawing(int value)
     {
         Assert.IsTrue(value == 0 || value == 1);
@@ -76,22 +70,24 @@ public class DrawingGallery : MonoBehaviour
         //{
         //    LoadDrawing(drawingIndex);
         //}
-        //else 
+        //else
         if (drawingIndex < 0)
         {
+            Debug.Log("preceeding");
             drawingIndex = Photon.Pun.PhotonNetwork.PlayerList.Length - 1;
+
         }
         // else display a default drawing
         else if (drawingIndex >= Photon.Pun.PhotonNetwork.PlayerList.Length)
         {
-            // warp back?
+            Debug.Log("exceeded right");
             drawingIndex = 0;
         }
-        else
-        {
-            Debug.Log("sth wrong");
-            uploader.SetDisplay(defaultTexture);
-        }
+        //else
+        //{
+        //    Debug.Log("sth wrong");
+        //    uploader.SetDisplay(defaultTexture);
+        //}
 
         LoadDrawing(drawingIndex);
 

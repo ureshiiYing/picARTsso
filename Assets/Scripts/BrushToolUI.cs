@@ -35,7 +35,6 @@ public class BrushToolUI : MonoBehaviour
         ColorBlock buttonColour = brushButton.colors;
         buttonColour.normalColor = brushColour;
         buttonColour.highlightedColor = brushColour;
-        buttonColour.pressedColor = brushColour; // can make it a bit darker?
         buttonColour.selectedColor = brushColour;
         brushButton.colors = buttonColour;
     }

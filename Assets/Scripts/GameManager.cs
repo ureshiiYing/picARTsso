@@ -5,8 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -72,8 +70,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // winner UI
     [SerializeField] private GameObject winnerPanel;
     [SerializeField] private TMP_Text winnerNameText;
-
-
 
     #endregion
 
@@ -156,16 +152,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         currHost = 0;
 
         state = GameState.Starting;
-        // other method involving actor number
-        //for (int i = 0; i < numOfPlayers; i++)
-        //{
-        //    if (PhotonNetwork.IsMasterClient)
-        //    {
-                
-        //    }
-        //    players[i] = PhotonNetwork.PlayerList[i];
-        //}
-
     }
 
 
