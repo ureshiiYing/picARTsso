@@ -1,9 +1,9 @@
 {
     "name": "Tests",
     "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "GameAssembly"
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:2ad5f31ae38f95a419162190703c42d7"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

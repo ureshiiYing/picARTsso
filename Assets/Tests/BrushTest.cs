@@ -9,21 +9,22 @@ namespace Tests
     public class BrushTest
     {
         private DrawManager brush;
+        private GameObject cam;
 
         [SetUp]
         public void Setup()
         {
-            MonoBehaviour.Instantiate(Resources.Load<GameObject>("Test Prefab/Main Camera"));
+            cam = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Test Prefab/Main Camera"));
             GameObject gameObj = MonoBehaviour.Instantiate(Resources.Load<GameObject>("Test Prefab/Draw Manager"));
             brush = gameObj.GetComponent<DrawManager>();
         }
 
-        //[TearDown]
-        //public void Teardown()
-        //{
-        //    Object.Destroy(brush.gameObject);
-        //    Object.Destroy(cam.gameObjec);
-        //}
+        [TearDown]
+        public void Teardown()
+        {
+            Object.Destroy(brush.gameObject);
+            Object.Destroy(cam.gameObject);
+        }
 
 
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
