@@ -113,7 +113,7 @@ public class DrawManager : MonoBehaviour
         colourPickerPanel.SetActive(false);
     }
 
-    private void ChangeBrushColour(Color colour)
+    public void ChangeBrushColour(Color colour)
     {
         trailRenderer.startColor = colour;
         trailRenderer.endColor = colour;

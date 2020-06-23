@@ -6,8 +6,11 @@ public class FollowCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 temp = Input.mousePosition;
-        temp.z = 0f;
-        this.transform.position = Camera.main.ScreenToWorldPoint(temp);
+        if (Input.mousePosition != null)
+        {
+            Vector3 temp = Input.mousePosition;
+            temp.z = 0f;
+            this.transform.position = Camera.main.ScreenToWorldPoint(temp);
+        }
     }
 }
