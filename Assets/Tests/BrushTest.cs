@@ -27,19 +27,28 @@ namespace Tests
         }
 
 
-        // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-        // `yield return null;` to skip a frame.
         [UnityTest]
-        public IEnumerator BrushTest_ChangeBrushSize()
+        public IEnumerator BrushTest_ChangeBrushSizeSuccess()
         {
             float size = 0.2f;
             brush.SetBrushSize(size);
 
-            // Use the Assert class to test conditions.
-            // Use yield to skip a frame.
             yield return null;
 
-            Assert.AreEqual(brush.drawPrefab.GetComponent<TrailRenderer>().startWidth, size);
+            Assert.AreEqual(size, brush.drawPrefab.GetComponent<TrailRenderer>().startWidth);
+        }
+
+        [UnityTest]
+        public IEnumerator BrushTest_ChangeBrushSizeFailed()
+        {
+            float originalSize = brush.drawPrefab.GetComponent<TrailRenderer>().startWidth;
+            float size = -0.2f;
+            brush.SetBrushSize(size);
+
+            yield return null;
+
+            Assert.AreEqual(originalSize, brush.drawPrefab.GetComponent<TrailRenderer>().startWidth);
+            Assert.AreNotEqual(size, brush.drawPrefab.GetComponent<TrailRenderer>().startWidth);
         }
 
         [UnityTest]

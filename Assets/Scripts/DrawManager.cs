@@ -96,7 +96,10 @@ public class DrawManager : MonoBehaviour
 
     public void SetBrushSize(float brushSize)
     {
-        trailRenderer.startWidth = brushSize;
+        if (brushSize > 0)
+        {
+            trailRenderer.startWidth = brushSize;
+        }
     }
 
     public void UpdateBrushColour()

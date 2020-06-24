@@ -8,7 +8,7 @@ using Photon.Pun;
 public class UploadDownloadDrawing : MonoBehaviour
 {
     public RawImage display;
-    private bool setDisplay = false;
+
     private string downloadURL;
 
     public Texture2D SaveDrawingAsTexture()
@@ -47,8 +47,6 @@ public class UploadDownloadDrawing : MonoBehaviour
     // used to upload the texture 
     public void StartUpload(Texture2D screenshot)
     {
-        // reset the set bool everytime there is a new upload
-        setDisplay = false;
         // start uploading
         StartCoroutine(CoUpload(screenshot));
     }
@@ -87,7 +85,6 @@ public class UploadDownloadDrawing : MonoBehaviour
 
             var uploadTask = screenshotRef.PutBytesAsync(bytes, metadataChange);
             yield return new WaitUntil(() => uploadTask.IsCompleted);
-            Debug.Log("uploaded");
 
             // handle error
             if (uploadTask.Exception != null)
@@ -95,6 +92,7 @@ public class UploadDownloadDrawing : MonoBehaviour
                 Debug.LogError($"Failed to upload because {uploadTask.Exception}");
                 yield break;
             }
+            Debug.Log("uploaded");
 
             // clear all drawings
             DrawManager drawManager = FindObjectOfType<DrawManager>();
@@ -158,10 +156,6 @@ public class UploadDownloadDrawing : MonoBehaviour
         return downloadURL;
     }
 
-    public bool CheckSetDisplay()
-    {
-        return setDisplay;
-    }
 
     // to be used to download and display the drawings
     // obtain an array of paths from the users submission
@@ -185,7 +179,7 @@ public class UploadDownloadDrawing : MonoBehaviour
             // handle any error
             if (downloadTask.Exception != null)
             {
-                Debug.LogError("Failed to download because " + downloadTask.Exception);
+                Debug.LogError("Failed to download"); //"because " + downloadTask.Exception);
             }
 
             var texture = new Texture2D(2, 2);
@@ -207,11 +201,6 @@ public class UploadDownloadDrawing : MonoBehaviour
         if (texture != null)
         {
             display.GetComponent<RawImage>().texture = texture;
-            setDisplay = true;
-        }
-        else
-        {
-            setDisplay = false;
         }
     }
 
@@ -234,10 +223,12 @@ public class UploadDownloadDrawing : MonoBehaviour
             // handle error
             if (deleteTask.Exception != null)
             {
-                Debug.LogError("Cannot delete this drawing because " + deleteTask.Exception);
+                Debug.LogError("Failed to delete"); //because " + deleteTask.Exception);
             }
-
-            Debug.Log("Successfully deleted");
+            else
+            {
+                Debug.Log("Successfully deleted");
+            }
         }
         else
         {
