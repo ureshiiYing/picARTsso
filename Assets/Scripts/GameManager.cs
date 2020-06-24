@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
+    #region nested classes
+
     public enum EventCodes : byte
     {
         StartNewRound,
@@ -29,13 +31,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Ending = 4
     }
 
+    #endregion
 
 
-    /* To do:
-    - the transition after on submit
-    - so we have a move to waiting room method too?
-
-    */
     #region Fields
     // fields for recording game settings
     private int timeLimit;
@@ -70,6 +68,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // winner UI
     [SerializeField] private GameObject winnerPanel;
     [SerializeField] private TMP_Text winnerNameText;
+
+    // game winner UI
+    [SerializeField] private TMP_Text gameWinnerText;
 
     #endregion
 
@@ -612,6 +613,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Debug.Log("Game Ended");
 
         // display winner
+        gameWinnerText.GetComponent<TMP_Text>().text = player.NickName + " !";
         Debug.Log(player.NickName + " wins !");
     }
 
