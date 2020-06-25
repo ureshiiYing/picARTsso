@@ -304,7 +304,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         yield return new WaitForSecondsRealtime(1f);
 
         currTime -= 1;
-        Debug.Log(currTime);
 
         if (currTime < 0) 
         {
@@ -403,7 +402,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         currTime = (int)data[0];
         RefreshTimerUI();
-        Debug.Log(currTime);
+
         if (currTime <= 0)
         {
             if (state == GameState.HostPlaying)

@@ -42,10 +42,14 @@ public class Scoreboard : MonoBehaviour
 
     public IEnumerator CoIncrementScore(Player player)
     {
+        Debug.Log("ori score: " + (int)player.CustomProperties["Score"]);
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
-        playerOps.Add("Score", (int)player.CustomProperties["Score"] + 1);
+        int newScore = (int)player.CustomProperties["Score"] + 1;
+        Debug.Log("updating score: " + newScore);
+        playerOps.Add("Score", newScore);
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
+        Debug.Log("new score: " + (int)player.CustomProperties["Score"]);
 
         // refresh the scoreboard
         StartCoroutine(CoRefresh());

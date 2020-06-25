@@ -66,19 +66,19 @@ public class DrawingGallery : MonoBehaviour
         }
 
         // if within player number limits
-        //if (drawingIndex >= 0 && drawingIndex < Photon.Pun.PhotonNetwork.PlayerList.Length)
+        //if (drawingIndex >= 0 && drawingIndex < downloadPaths.Length)
         //{
         //    LoadDrawing(drawingIndex);
         //}
-        //else
+        //else 
         if (drawingIndex < 0)
         {
             Debug.Log("preceeding");
-            drawingIndex = Photon.Pun.PhotonNetwork.PlayerList.Length - 1;
+            drawingIndex = downloadPaths.Length - 1;
 
         }
         // else display a default drawing
-        else if (drawingIndex >= Photon.Pun.PhotonNetwork.PlayerList.Length)
+        else if (drawingIndex >= downloadPaths.Length)
         {
             Debug.Log("exceeded right");
             drawingIndex = 0;

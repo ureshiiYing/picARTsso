@@ -22,6 +22,8 @@ public class Chat : MonoBehaviour, IChatClientListener
     private GameObject messageListingPrefab; // gameobject containing text component
     private int maxMessages = 100;
 
+    [SerializeField] private GameObject noti;
+
     // has yet to implement:
     // 1) limit number of messages stored in chat
     // 2) unsubscribe and disconnected from chat (retry connection?)
@@ -62,6 +64,17 @@ public class Chat : MonoBehaviour, IChatClientListener
             Text tempText = tempListing.transform.GetComponent<Text>();
             tempText.text = string.Format("{2} ", "", senders[i], messages[i]); //wtfisthis
         }
+
+        // noti icon spawn
+        if (!chatPanel.activeSelf)
+        {
+            noti.SetActive(true);
+        }
+    }
+
+    public void ClearNoti()
+    {
+        noti.SetActive(false);
     }
 
     public void OnPrivateMessage(string sender, object message, string channelName)
