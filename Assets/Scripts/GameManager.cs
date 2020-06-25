@@ -609,11 +609,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         judgingUI.SetActive(false);
         endingUI.SetActive(true);
-        Debug.Log("Game Ended");
 
         // display winner
         gameWinnerText.GetComponent<TMP_Text>().text = player.NickName + " !";
-        Debug.Log(player.NickName + " wins !");
     }
 
     #endregion

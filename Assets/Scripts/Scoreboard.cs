@@ -91,7 +91,6 @@ public class Scoreboard : MonoBehaviour
             Player temp = players[i];
             players[i] = players[currIndex];
             players[currIndex] = temp;
-            Debug.Log("score sort " + i + "  " + players[i].CustomProperties["Score"]);
         }
 
         sortedPlayers = players;
@@ -117,7 +116,6 @@ public class Scoreboard : MonoBehaviour
         Player[] players = SortByScore();
         foreach (Player player in players)
         {
-            Debug.Log(player.CustomProperties["Score"].ToString());
             GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
             TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
             TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();

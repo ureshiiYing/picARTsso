@@ -56,10 +56,10 @@ public class DrawManager : MonoBehaviour
                     }
                     theTrail = Instantiate(drawPrefab, startPos, Quaternion.identity);
                 }
-                else
-                {
-                    Debug.Log("Touch UI");
-                }
+                //else
+                //{
+                //    Debug.Log("Touch UI");
+                //}
 
             }
             // there is a prolonged touch
