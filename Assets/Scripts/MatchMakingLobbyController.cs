@@ -17,6 +17,10 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     private InputField playerNameInput;
     [SerializeField]
     private GameObject lobbyPanel;
+    [SerializeField]
+    private GameObject createPanel;
+    [SerializeField]
+    private GameObject choosePanel;
 
     private string joinRoomName;
     private string createRoomName;
@@ -67,10 +71,10 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     }
 
     //enter lobby
-    public void JoinGameOnClick() // paired to join game button
+    public void JoinGameOnClick() // paired to join lobby button
     {
         mainPanel.SetActive(false);
-        lobbyPanel.SetActive(true);
+        choosePanel.SetActive(true);
         PhotonNetwork.JoinLobby(); // joins lobby and receive updates on rooms
     }
 
@@ -174,7 +178,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     public void MatchmakingCancel()
     {
         mainPanel.SetActive(true);
-        lobbyPanel.SetActive(false);
+        choosePanel.SetActive(false);
         PhotonNetwork.LeaveLobby();
     }
 
