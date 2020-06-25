@@ -22,4 +22,13 @@ public class PanelOpener : MonoBehaviour
             panel.SetActive(false);
         }
     }
+
+    public void SwitchToPanel(GameObject thatPanel)
+    {
+        if(panel != null && thatPanel != null)
+        {
+            panel.SetActive(false);
+            thatPanel.SetActive(true);
+        }
+    }
 }

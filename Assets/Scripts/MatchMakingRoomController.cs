@@ -14,6 +14,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     [SerializeField]
     private GameObject lobbyPanel;
     [SerializeField]
+    private GameObject createPanel;
+    [SerializeField]
     private GameObject roomPanel;
 
     [SerializeField]
@@ -64,8 +66,9 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     // reload list of players & change panels
     public override void OnJoinedRoom()
     {
-        roomPanel.SetActive(true);
+        createPanel.SetActive(false);
         lobbyPanel.SetActive(false);
+        roomPanel.SetActive(true);
         roomsNameDisplay.text = PhotonNetwork.CurrentRoom.Name;
         if (PhotonNetwork.IsMasterClient)
         {

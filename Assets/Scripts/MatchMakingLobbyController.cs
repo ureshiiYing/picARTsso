@@ -42,6 +42,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         roomListings = new List<RoomInfo>();
         isRoomPublic = true;
         createRoomSize = 3;
+        joinRoomName = "";
 
         // check if player keyed in a name, else generate one for them
         if(PlayerPrefs.HasKey("Nickname"))
@@ -135,6 +136,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
+
         Debug.Log("Tried to join a room but failed, room is non-existent, closed or full.");
     }
 
@@ -159,7 +161,6 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
-
         Debug.Log("Creating room now");
         RoomOptions roomOps = new RoomOptions() { IsVisible = isRoomPublic, IsOpen = true, MaxPlayers = (byte)createRoomSize };
         roomOps.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();

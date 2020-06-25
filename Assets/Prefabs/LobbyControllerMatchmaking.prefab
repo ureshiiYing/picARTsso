@@ -47,6 +47,8 @@ MonoBehaviour:
   lobbyConnectButton: {fileID: 0}
   playerNameInput: {fileID: 0}
   lobbyPanel: {fileID: 0}
+  createPanel: {fileID: 0}
+  choosePanel: {fileID: 0}
   roomsContainer: {fileID: 0}
   roomListingPrefab: {fileID: 5686777641432974956, guid: eef6fabf4e1a4483d938d96cc7fb917f,
     type: 3}
