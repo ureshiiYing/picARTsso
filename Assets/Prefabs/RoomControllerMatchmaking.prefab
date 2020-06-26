@@ -45,7 +45,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   multiplayerSceneIndex: 1
   lobbyPanel: {fileID: 0}
+  createPanel: {fileID: 0}
   roomPanel: {fileID: 0}
+  joinPanel: {fileID: 0}
   startButton: {fileID: 0}
   timeLimit: {fileID: 0}
   selectTheme: {fileID: 0}

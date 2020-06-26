@@ -17,6 +17,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     private GameObject createPanel;
     [SerializeField]
     private GameObject roomPanel;
+    [SerializeField]
+    private GameObject joinPanel;
 
     [SerializeField]
     private GameObject startButton;
@@ -68,6 +70,7 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     {
         createPanel.SetActive(false);
         lobbyPanel.SetActive(false);
+        joinPanel.SetActive(false);
         roomPanel.SetActive(true);
         roomsNameDisplay.text = PhotonNetwork.CurrentRoom.Name;
         if (PhotonNetwork.IsMasterClient)

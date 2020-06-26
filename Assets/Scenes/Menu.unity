@@ -10413,9 +10413,19 @@ PrefabInstance:
       objectReference: {fileID: 345947048}
     - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
+      propertyPath: createPanel
+      value: 
+      objectReference: {fileID: 1704613309}
+    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
+        type: 3}
       propertyPath: roomPanel
       value: 
       objectReference: {fileID: 1621117436}
+    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
+        type: 3}
+      propertyPath: joinPanel
+      value: 
+      objectReference: {fileID: 1283972961}
     - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
         type: 3}
       propertyPath: startButton
@@ -10461,11 +10471,6 @@ PrefabInstance:
       propertyPath: roomsNameDisplay
       value: 
       objectReference: {fileID: 1060227432}
-    - target: {fileID: 5629532387184666507, guid: 731ad3f40452f441f9da2ab3b262dc52,
-        type: 3}
-      propertyPath: createPanel
-      value: 
-      objectReference: {fileID: 1704613309}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 731ad3f40452f441f9da2ab3b262dc52, type: 3}
 --- !u!1001 &2782439926720884491
