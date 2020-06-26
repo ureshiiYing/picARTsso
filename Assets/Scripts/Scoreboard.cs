@@ -91,6 +91,8 @@ public class Scoreboard : MonoBehaviour
             Player temp = players[i];
             players[i] = players[currIndex];
             players[currIndex] = temp;
+
+            Debug.Log(players[i].NickName + ": " + (int)players[i].CustomProperties["Score"]);
         }
 
         sortedPlayers = players;

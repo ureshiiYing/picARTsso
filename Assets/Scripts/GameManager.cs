@@ -439,11 +439,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void OnWordConfirmation_R(object[] data)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            // stop the host countdown timer
-            InitializeTimer(timeLimit);
-        }
+         // stop the host countdown timer
+         InitializeTimer(timeLimit);
+       
 
         string wordToDisplay = (string)data[0];
 
@@ -527,7 +525,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         pickPanel.SetActive(false);
 
         int winnerIndex = judgingUI.GetComponent<DrawingGallery>().GetWinner();
-        object[] package = new object[] { winnerIndex };
+
+        Player[] drawingPlayers = GetArrayOfPlayersWithoutHost();
+        Player winner = drawingPlayers[winnerIndex];
+
+        object[] package = new object[] { winnerIndex, winner };
 
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.SetWinner,
@@ -540,17 +542,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void SetWinnerOfThisRound_R(object[] data)
     {
         int winnerIndex = (int)data[0];
-        StartCoroutine(CoSetWinner(winnerIndex));
+        Player winner = (Player)data[1];
+        StartCoroutine(CoSetWinner(winnerIndex, winner));
     }
 
-    private IEnumerator CoSetWinner(int winnerIndex)
+    private IEnumerator CoSetWinner(int winnerIndex, Player winner)
     {
         // display the winning drawing
         judgingUI.GetComponent<DrawingGallery>().LoadDrawing(winnerIndex);
 
-        Player[] drawingPlayers = GetArrayOfPlayersWithoutHost();
-
-        winnerNameText.GetComponent<TMP_Text>().text = drawingPlayers[winnerIndex].NickName + " !"; // set to player name
+        winnerNameText.GetComponent<TMP_Text>().text = winner.NickName + " !"; // set to player name
         
         // pop up something to show that this is the winner for this round
         winnerPanel.SetActive(true);
@@ -559,11 +560,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         winnerPanel.SetActive(false);
 
-        // set score
-        yield return StartCoroutine(scoreboard.CoIncrementScore(drawingPlayers[winnerIndex]));
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Debug.Log("setting score");
+            // set score
+            yield return StartCoroutine(scoreboard.CoIncrementScore(winner));
+            Debug.Log("set score done");
 
-        // check if there is a winner otherwise
-        ScoreCheck(drawingPlayers[winnerIndex]);
+            // check if there is a winner otherwise
+            ScoreCheck(winner);
+        }
 
     }
 
