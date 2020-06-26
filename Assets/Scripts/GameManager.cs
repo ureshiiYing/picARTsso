@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public enum EventCodes : byte
     {
         StartNewRound,
+        TriggerNextRound,
         SetNextHost,
         RefreshTimer,
         OnWordConfirmation,
@@ -88,6 +90,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 StartNewRound_R();
                 break;
 
+            case EventCodes.TriggerNextRound:
+                TriggerNextRound_R();
+                break;
+
             case EventCodes.SetNextHost:
                 SetNextHost_R();
                 break;
@@ -158,28 +164,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     // called by skip button
     // called when auto skip
+    // fix this logic: called by everyone lmao?
     public void OnHostSkip()
     {
         wordGenerator.GenerateWord();
-        TriggerNextRound();
+        TriggerNextRound_S();
     }
 
-    // called when the round ends
-    public void TriggerNextRound()
-    {
-        // only host can call this
-        if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
-        {
-            // change host first
-            SetNextHost_S();
-
-
-            Debug.Log("starting new round");
-
-
-            StartNewRound_S();
-        }
-    }
+    
 
     // save the upload string, update player status
     // called by the submit button on drawing UI
@@ -263,7 +255,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         else
         {
             // should trigger the next round... 
-            TriggerNextRound();
+            TriggerNextRound_S();
         }
     }
 
@@ -384,6 +376,33 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         InitializeTimer(hostTimeLimit);
     }
 
+    public void TriggerNextRound_S()
+    {
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.TriggerNextRound,
+            null,
+            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    // called when the round ends
+    public void TriggerNextRound_R()
+    {
+        // only host can call this
+        //if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
+        //if (PhotonNetwork.IsMasterClient)
+        //{
+        // change host first
+        SetNextHost_S();
+
+
+        Debug.Log("starting new round");
+
+
+        StartNewRound_S();
+        //}
+    }
 
     public void RefreshTimer_S()
     {
@@ -566,7 +585,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             // set score
             yield return StartCoroutine(scoreboard.CoIncrementScore(winner));
             Debug.Log("set score done");
+        }
 
+        yield return StartCoroutine(scoreboard.CoRefresh());
+
+        if (PhotonNetwork.IsMasterClient) 
+        { 
             // check if there is a winner otherwise
             ScoreCheck(winner);
         }

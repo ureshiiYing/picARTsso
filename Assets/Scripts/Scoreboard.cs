@@ -50,13 +50,10 @@ public class Scoreboard : MonoBehaviour
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
         Debug.Log("new score: " + (int)player.CustomProperties["Score"]);
-
-        // refresh the scoreboard
-        StartCoroutine(CoRefresh());
     }
 
 
-    private IEnumerator CoRefresh()
+    public IEnumerator CoRefresh()
     {
         yield return new WaitForSeconds(1f);
         RefreshScoreboard();
