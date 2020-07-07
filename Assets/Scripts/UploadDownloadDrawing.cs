@@ -26,6 +26,7 @@ public class UploadDownloadDrawing : MonoBehaviour
         return texture;
     }
 
+    // upload and save drawing onto the cloud
     public void Save()
     {
         StartCoroutine(CoSave());
@@ -234,6 +235,11 @@ public class UploadDownloadDrawing : MonoBehaviour
         {
             Debug.LogError("Cannot delete as no download path provided");
         }
+    }
+
+    public void SaveDrawing(string path)
+    {
+
     }
 
 }

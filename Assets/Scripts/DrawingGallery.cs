@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using UnityEngine.Assertions;
 using Photon.Realtime;
 
@@ -10,6 +10,7 @@ public class DrawingGallery : MonoBehaviour
     
     public UploadDownloadDrawing uploader;
     public Texture2D defaultTexture;
+    public GameObject saveButton;
 
     private string[] downloadPaths;
     private int drawingIndex = 0;
@@ -21,7 +22,9 @@ public class DrawingGallery : MonoBehaviour
     {
         drawingIndex = 0;
         winnerIndex = -1;
-        
+
+        saveButton.SetActive(true);
+
         // in actual game, the drawing from index 0 should be displayed
         LoadDrawing(drawingIndex);
         
@@ -44,6 +47,7 @@ public class DrawingGallery : MonoBehaviour
     // to be called once when the judgingUI loads
     public void LoadDrawing(int index)
     {
+        // download drawings onto the display
         uploader.DownloadDrawing(downloadPaths[index]);
     }
     
@@ -101,6 +105,10 @@ public class DrawingGallery : MonoBehaviour
         return winnerIndex;
     }
 
-
+    // to be called by save button click
+    public void SaveCurrentDrawing()
+    {
+        uploader.SaveDrawing(downloadPaths[drawingIndex]);
+    }
 
 }
