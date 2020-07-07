@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Firebase.Storage;
 using Photon.Pun;
+using UnityEngine.SocialPlatforms;
 
 public class UploadDownloadDrawing : MonoBehaviour
 {
@@ -239,7 +240,47 @@ public class UploadDownloadDrawing : MonoBehaviour
 
     public void SaveDrawing(string path)
     {
+        StartCoroutine(CoSaveDrawing(path));
+    }
 
+    private IEnumerator CoSaveDrawing(string path)
+    { 
+        if (path != null)
+        {
+            var storage = FirebaseStorage.DefaultInstance;
+            var screenshotRef = storage.GetReferenceFromUrl(path);
+
+            // Create local filesystem URL
+            string local_url = Application.persistentDataPath + screenshotRef.Path;
+            Debug.Log(local_url);
+            
+            // Download to the local filesystem
+            var saveTask = screenshotRef.GetFileAsync(local_url);
+            yield return new WaitUntil(() => saveTask.IsCompleted);
+
+            // handle error
+            if (saveTask.Exception != null)
+            {
+                Debug.LogError("Failed to save drawing"); //because " + saveTask.Exception);
+                Debug.LogError(saveTask.Exception);
+            }
+            else
+            {
+                Debug.Log("Successfully saved to " + local_url);
+            }
+
+            //screenshotRef.GetFileAsync(local_url).ContinueWith(task => {
+            //    if (!task.IsFaulted && !task.IsCanceled)
+            //    {
+            //        Debug.Log("File downloaded.");
+            //    }
+            //});
+
+        }
+        else
+        {
+            Debug.Log("No download path provided");
+        }
     }
 
 }
