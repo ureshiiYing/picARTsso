@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Firebase.Storage;
 using Photon.Pun;
 using UnityEngine.SocialPlatforms;
+using System.IO;
 
 public class UploadDownloadDrawing : MonoBehaviour
 {
@@ -238,23 +239,58 @@ public class UploadDownloadDrawing : MonoBehaviour
         }
     }
 
-    public void SaveDrawing(string path)
+    public void SaveDrawingOnDevice(string path)
     {
-        StartCoroutine(CoSaveDrawing(path));
+        StartCoroutine(CoSaveDrawingOnDevice(path));
     }
 
-    private IEnumerator CoSaveDrawing(string path)
+    private IEnumerator CoSaveDrawingOnDevice(string path)
     { 
         if (path != null)
         {
             var storage = FirebaseStorage.DefaultInstance;
             var screenshotRef = storage.GetReferenceFromUrl(path);
+            string local_path = "";
 
             // Create local filesystem URL
-            string local_url = Application.persistentDataPath + screenshotRef.Path;
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                local_path = Application.persistentDataPath + "/Saved Drawings";
+                
+            }
+            else
+            {
+                // unity editor testing
+                local_path = Application.dataPath + "/Saved Drawings";
+            }
+
+            // check if the directory exists, else create a folder which will store the pictures
+            try
+            {    
+                if (Directory.Exists(local_path))
+                {
+                    Debug.Log("saved path already exists");
+                }
+
+                var newDir = Directory.CreateDirectory(local_path);
+                Debug.Log("created save path dir");
+            }
+            catch (Exception e)
+            {
+                Debug.Log("failed because of " + e.ToString());
+            }
+
+            string local_url = local_path + "/" + screenshotRef.Name;
             Debug.Log(local_url);
-            
-            // Download to the local filesystem
+
+            if (File.Exists(local_url))
+            {
+                // there exists a file with the same name
+                // in this case, change the file name
+                local_url = local_path + $"/{Guid.NewGuid()}.png";
+            }
+
+            //Download to the local filesystem
             var saveTask = screenshotRef.GetFileAsync(local_url);
             yield return new WaitUntil(() => saveTask.IsCompleted);
 
@@ -269,12 +305,16 @@ public class UploadDownloadDrawing : MonoBehaviour
                 Debug.Log("Successfully saved to " + local_url);
             }
 
-            //screenshotRef.GetFileAsync(local_url).ContinueWith(task => {
-            //    if (!task.IsFaulted && !task.IsCanceled)
-            //    {
-            //        Debug.Log("File downloaded.");
-            //    }
-            //});
+            // final check that it is saved
+            if (File.Exists(local_url))
+            {
+                Debug.Log("the file is saved and exists");
+            }
+            else
+            {
+                Debug.Log("where's the file?");
+            }
+
 
         }
         else

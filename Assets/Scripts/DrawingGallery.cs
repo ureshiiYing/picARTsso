@@ -108,7 +108,12 @@ public class DrawingGallery : MonoBehaviour
     // to be called by save button click
     public void SaveCurrentDrawing()
     {
-        uploader.SaveDrawing(downloadPaths[drawingIndex]);
+        //for testing
+        string test_path = "gs://picartsso.appspot.com/drawings/f7c5ed0c-ddd8-42a2-82b9-03b46075a110.png";
+        uploader.SaveDrawingOnDevice(test_path);
+        uploader.DownloadDrawing(test_path);
+        //actual code
+        //uploader.SaveDrawing(downloadPaths[drawingIndex]);
     }
 
 }
