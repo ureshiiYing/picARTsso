@@ -222,8 +222,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 
     IEnumerator rejoinLobby()
     {
-        yield return new WaitForSeconds(1);
         PhotonNetwork.JoinLobby();
+        yield return new WaitForSeconds(1);
     }
 
     public void BackOnClick()
@@ -233,6 +233,7 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LeaveLobby();
         StartCoroutine(rejoinLobby());
+
     }
 }
 

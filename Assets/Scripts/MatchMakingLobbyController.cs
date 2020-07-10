@@ -2,8 +2,10 @@
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
 {
@@ -21,6 +23,9 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     private GameObject createPanel;
     [SerializeField]
     private GameObject choosePanel;
+    [SerializeField]
+    private GameObject errorPanel;
+
 
     private string joinRoomName;
     private string createRoomName;
@@ -101,6 +106,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
             }
 
         }
+        
     }
 
     // relist rooms
@@ -130,20 +136,18 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.Log("Please enter a valid input for room name!");
+            errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Please enter a valid input for room name!");
         }
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-
-        Debug.Log("Tried to join a room but failed, room is non-existent, closed or full.");
+        errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Tried to join a room but failed, room is non-existent, closed or full.");
     }
 
     // linked to public toggle
     public void OnPublicChanged(bool boolean)
     {
-        Debug.Log("toggle is " + boolean);
         isRoomPublic = boolean;
     }
 
@@ -167,12 +171,14 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         roomOps.CustomRoomProperties.Add("MaxPoints", 5);
         roomOps.CustomRoomProperties.Add("Theme", "GeneralTheme");
         roomOps.CustomRoomProperties.Add("TimeLimit", 30);
+        roomOps.PlayerTtl = 3000; // 30sec
+        roomOps.EmptyRoomTtl = 3000; // 30sec
         PhotonNetwork.CreateRoom(createRoomName, roomOps);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        Debug.Log("Tried to create a new room but failed, there must already be a room with same name.");
+        errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Tried to create a new room but failed, there must already be a room with same name.");
     }
 
     // return to lobby
