@@ -6,6 +6,7 @@ using Firebase.Storage;
 using Photon.Pun;
 using UnityEngine.SocialPlatforms;
 using System.IO;
+using System.Threading.Tasks;
 
 public class UploadDownloadDrawing : MonoBehaviour
 {
@@ -66,7 +67,7 @@ public class UploadDownloadDrawing : MonoBehaviour
             if (PhotonNetwork.CurrentRoom != null)
             {
                 string roomName = PhotonNetwork.CurrentRoom.Name;
-                //create a new folder for each game room-- > require a game room id instead of drawings
+                //create a new folder for each game room  --> require a game room id instead of drawings
                 filePath = $"/{roomName}/{Guid.NewGuid()}.png";
             }
             else
@@ -172,6 +173,7 @@ public class UploadDownloadDrawing : MonoBehaviour
         // if the path not null
         if (path != null)
         {
+            
             var storage = FirebaseStorage.DefaultInstance;
             var screenshotRef = storage.GetReferenceFromUrl(path);
             Debug.Log("drawing obtained!");
@@ -184,7 +186,7 @@ public class UploadDownloadDrawing : MonoBehaviour
             {
                 Debug.LogError("Failed to download"); //"because " + downloadTask.Exception);
             }
-
+            
             var texture = new Texture2D(2, 2);
             texture.LoadImage(downloadTask.Result);
 
@@ -194,10 +196,10 @@ public class UploadDownloadDrawing : MonoBehaviour
         } 
         else
         {
-            // display a default image? skip over?
             Debug.LogError("Cannot download as no path provided");
         }
     }
+
 
     public void SetDisplay(Texture2D texture)
     {
@@ -245,81 +247,31 @@ public class UploadDownloadDrawing : MonoBehaviour
     }
 
     private IEnumerator CoSaveDrawingOnDevice(string path)
-    { 
+    {
         if (path != null)
         {
             var storage = FirebaseStorage.DefaultInstance;
             var screenshotRef = storage.GetReferenceFromUrl(path);
-            string local_path = "";
+            Debug.Log("drawing obtained!");
 
-            // Create local filesystem URL
-            if (Application.platform == RuntimePlatform.Android)
+            var downloadTask = screenshotRef.GetBytesAsync(4 * 4096 * 4096);  // max file memory
+            yield return new WaitUntil(() => downloadTask.IsCompleted);
+
+            // handle any error
+            if (downloadTask.Exception != null)
             {
-                local_path = Application.persistentDataPath + "/Saved Drawings";
-                
-            }
-            else
-            {
-                // unity editor testing
-                local_path = Application.dataPath + "/Saved Drawings";
+                Debug.LogError("Failed to download"); //"because " + downloadTask.Exception);
             }
 
-            // check if the directory exists, else create a folder which will store the pictures
-            try
-            {    
-                if (Directory.Exists(local_path))
-                {
-                    Debug.Log("saved path already exists");
-                }
+            // saves to android gallery, does not do anything on the editor
+            NativeGallery.SaveImageToGallery(downloadTask.Result, "picARTsso", screenshotRef.Name);
 
-                var newDir = Directory.CreateDirectory(local_path);
-                Debug.Log("created save path dir");
-            }
-            catch (Exception e)
-            {
-                Debug.Log("failed because of " + e.ToString());
-            }
-
-            string local_url = local_path + "/" + screenshotRef.Name;
-            Debug.Log(local_url);
-
-            if (File.Exists(local_url))
-            {
-                // there exists a file with the same name
-                // in this case, change the file name
-                local_url = local_path + $"/{Guid.NewGuid()}.png";
-            }
-
-            //Download to the local filesystem
-            var saveTask = screenshotRef.GetFileAsync(local_url);
-            yield return new WaitUntil(() => saveTask.IsCompleted);
-
-            // handle error
-            if (saveTask.Exception != null)
-            {
-                Debug.LogError("Failed to save drawing"); //because " + saveTask.Exception);
-                Debug.LogError(saveTask.Exception);
-            }
-            else
-            {
-                Debug.Log("Successfully saved to " + local_url);
-            }
-
-            // final check that it is saved
-            if (File.Exists(local_url))
-            {
-                Debug.Log("the file is saved and exists");
-            }
-            else
-            {
-                Debug.Log("where's the file?");
-            }
-
-
+            // show a pop up when it's successful
+            // check if application.persistentdatapath NGallery folder is empty, then show popup
         }
         else
         {
-            Debug.Log("No download path provided");
+            Debug.LogError("Cannot proceed with saving as no download path is provided");
         }
     }
 

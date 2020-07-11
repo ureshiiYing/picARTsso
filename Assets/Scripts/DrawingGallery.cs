@@ -109,8 +109,9 @@ public class DrawingGallery : MonoBehaviour
     public void SaveCurrentDrawing()
     {
         //for testing
-        string test_path = "gs://picartsso.appspot.com/drawings/f7c5ed0c-ddd8-42a2-82b9-03b46075a110.png";
-        uploader.SaveDrawingOnDevice(test_path);
+        //string test_path = "gs://picartsso.appspot.com/drawings/f7c5ed0c-ddd8-42a2-82b9-03b46075a110.png";
+        string test_path = "gs://picartsso.appspot.com/drawings/844740b3-1ec5-43aa-ac47-de8b3970448c.png";
+        //uploader.SaveDrawingOnDevice(test_path);
         uploader.DownloadDrawing(test_path);
         //actual code
         //uploader.SaveDrawing(downloadPaths[drawingIndex]);
