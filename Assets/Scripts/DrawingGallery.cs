@@ -30,7 +30,12 @@ public class DrawingGallery : MonoBehaviour
         
     }
 
-    
+    public void OnDisable()
+    {
+        saveButton.SetActive(false);
+    }
+
+
     // called by game manager to set the paths for gallery to use
     public void SetDownloadPaths(Player[] players)
     {
@@ -108,13 +113,7 @@ public class DrawingGallery : MonoBehaviour
     // to be called by save button click
     public void SaveCurrentDrawing()
     {
-        //for testing
-        //string test_path = "gs://picartsso.appspot.com/drawings/f7c5ed0c-ddd8-42a2-82b9-03b46075a110.png";
-        string test_path = "gs://picartsso.appspot.com/drawings/844740b3-1ec5-43aa-ac47-de8b3970448c.png";
-        //uploader.SaveDrawingOnDevice(test_path);
-        uploader.DownloadDrawing(test_path);
-        //actual code
-        //uploader.SaveDrawing(downloadPaths[drawingIndex]);
+        uploader.SaveDrawingOnDevice(downloadPaths[drawingIndex]);
     }
 
 }
