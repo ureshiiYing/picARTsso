@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Assertions;
 using Photon.Realtime;
+using TMPro;
 
 public class DrawingGallery : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class DrawingGallery : MonoBehaviour
     public GameObject saveButton;
 
     private string[] downloadPaths;
-    private int drawingIndex = 0;
+    private int[] randomisedDownloadPaths;
+    private int drawingIndex = 0; // pointer of randomised array
     private int winnerIndex = -1;
 
 
@@ -26,7 +28,7 @@ public class DrawingGallery : MonoBehaviour
         saveButton.SetActive(true);
 
         // in actual game, the drawing from index 0 should be displayed
-        LoadDrawing(drawingIndex);
+        LoadDrawing(GetActualIndexOfDownloadPathAt(drawingIndex));
         
     }
 
@@ -47,7 +49,36 @@ public class DrawingGallery : MonoBehaviour
             Debug.Log("set download url " + i);
         }
 
+        randomisedDownloadPaths = RandomiseIntArray(players.Length);
     }
+
+    // can unit test this
+    private int[] RandomiseIntArray(int len)
+    {
+        int[] result = new int[len];
+        // initialise the array
+        for (int i = 0; i < len; i++)
+        {
+            result[i] = i;
+        }
+        // randomise Knuth Shuffle algo
+        for (int i = 1; i < len; i++)
+        {
+            int rnd = Random.Range(0, i);
+            // swap values at index i and rnd
+            int temp = result[i];
+            result[i] = result[rnd];
+            result[rnd] = temp;
+        }
+
+        return result;
+    }
+
+    private int GetActualIndexOfDownloadPathAt(int index)
+    {
+        return randomisedDownloadPaths[index];
+    }
+
 
     // to be called once when the judgingUI loads
     public void LoadDrawing(int index)
@@ -98,7 +129,7 @@ public class DrawingGallery : MonoBehaviour
         //    uploader.SetDisplay(defaultTexture);
         //}
 
-        LoadDrawing(drawingIndex);
+        LoadDrawing(GetActualIndexOfDownloadPathAt(drawingIndex));
 
         Debug.Log("showing: " + drawingIndex);
     }
@@ -106,14 +137,14 @@ public class DrawingGallery : MonoBehaviour
 
     public int GetWinner()
     {
-        winnerIndex = drawingIndex;
+        winnerIndex = GetActualIndexOfDownloadPathAt(drawingIndex);
         return winnerIndex;
     }
 
     // to be called by save button click
     public void SaveCurrentDrawing()
     {
-        uploader.SaveDrawingOnDevice(downloadPaths[drawingIndex]);
+        uploader.SaveDrawingOnDevice(downloadPaths[GetActualIndexOfDownloadPathAt(drawingIndex)]);
     }
 
 }
