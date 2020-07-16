@@ -109,6 +109,7 @@ public class UploadDownloadDrawing : MonoBehaviour
                 Debug.Log("no draw manager");
             }
 
+            /*
             // no error continue to get a download url ==> technically not necessary for this game.
             // can keep this part for the save function
             var getURLTask = screenshotRef.GetDownloadUrlAsync();
@@ -123,6 +124,7 @@ public class UploadDownloadDrawing : MonoBehaviour
 
             Debug.Log("Download from " + getURLTask.Result);
             // ^ not necessary
+            */
 
             // save the storage reference of this drawing
             downloadURL = "gs://picartsso.appspot.com" + filePath;

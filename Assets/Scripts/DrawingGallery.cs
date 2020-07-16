@@ -27,6 +27,7 @@ public class DrawingGallery : MonoBehaviour
 
         saveButton.SetActive(true);
 
+        // todiscuss: wait until the drawing is loaded?
         // in actual game, the drawing from index 0 should be displayed
         LoadDrawing(GetActualIndexOfDownloadPathAt(drawingIndex));
         
@@ -114,11 +115,11 @@ public class DrawingGallery : MonoBehaviour
         if (drawingIndex < 0)
         {
             Debug.Log("preceeding");
-            drawingIndex = downloadPaths.Length - 1;
+            drawingIndex = randomisedDownloadPaths.Length - 1;
 
         }
         // else display a default drawing
-        else if (drawingIndex >= downloadPaths.Length)
+        else if (drawingIndex >= randomisedDownloadPaths.Length)
         {
             Debug.Log("exceeded right");
             drawingIndex = 0;
