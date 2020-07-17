@@ -27,7 +27,7 @@ public class DrawingGallery : MonoBehaviour
 
         saveButton.SetActive(true);
 
-        // todiscuss: wait until the drawing is loaded?
+        // todiscuss: wait until the drawing is loaded
         // in actual game, the drawing from index 0 should be displayed
         LoadDrawing(GetActualIndexOfDownloadPathAt(drawingIndex));
         
