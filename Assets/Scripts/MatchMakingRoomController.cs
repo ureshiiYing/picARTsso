@@ -22,6 +22,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 
     [SerializeField]
     private GameObject startButton;
+    [SerializeField]
+    private GameObject networkObj;
 
     [SerializeField]
     private GameObject timeLimit;
@@ -68,6 +70,7 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     // reload list of players & change panels
     public override void OnJoinedRoom()
     {
+        networkObj.GetComponent<Photon.Pun.UtilityScripts.DisconnectsRecovery>().wasInRoom = true;
         createPanel.SetActive(false);
         lobbyPanel.SetActive(false);
         joinPanel.SetActive(false);
@@ -233,6 +236,7 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LeaveLobby();
         StartCoroutine(rejoinLobby());
+        networkObj.GetComponent<Photon.Pun.UtilityScripts.DisconnectsRecovery>().wasInRoom = false;
 
     }
 }

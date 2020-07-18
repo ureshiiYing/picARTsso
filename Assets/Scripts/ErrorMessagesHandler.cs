@@ -15,6 +15,7 @@ public class ErrorMessagesHandler : MonoBehaviour
 
     private IEnumerator ErrorPrompt(string message)
     {
+      
         errorPanel.GetComponentInChildren<TMP_Text>().text = message;
         errorPanel.SetActive(true);
         yield return new WaitForSeconds(2f);

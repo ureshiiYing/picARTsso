@@ -395,6 +395,7 @@ GameObject:
   - component: {fileID: 3055292880442811242}
   - component: {fileID: 2155366875737370836}
   - component: {fileID: 7072058826678871701}
+  - component: {fileID: 2564072195463824948}
   m_Layer: 5
   m_Name: Report Button
   m_TagString: Untagged
@@ -501,7 +502,30 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2155366875737370836}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2564072195463824948}
+        m_MethodName: OnReportClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2564072195463824948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4397227095632600002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b26b18dd4b454cd8a109cb5a9b3e4c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4403538229815133054
 GameObject:
   m_ObjectHideFlags: 0

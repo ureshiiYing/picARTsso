@@ -49,6 +49,7 @@ MonoBehaviour:
   roomPanel: {fileID: 0}
   joinPanel: {fileID: 0}
   startButton: {fileID: 0}
+  networkObj: {fileID: 0}
   timeLimit: {fileID: 0}
   selectTheme: {fileID: 0}
   numOfPoints: {fileID: 0}

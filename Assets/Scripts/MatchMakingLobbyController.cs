@@ -132,7 +132,6 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         {
             Debug.Log("Joining room now");
             PhotonNetwork.JoinRoom(joinRoomName);
-    
         }
         else
         {
@@ -171,8 +170,8 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         roomOps.CustomRoomProperties.Add("MaxPoints", 5);
         roomOps.CustomRoomProperties.Add("Theme", "GeneralTheme");
         roomOps.CustomRoomProperties.Add("TimeLimit", 30);
-        roomOps.PlayerTtl = 3000; // 30sec
-        roomOps.EmptyRoomTtl = 3000; // 30sec
+        roomOps.PlayerTtl = 60000; // 60sec
+        roomOps.EmptyRoomTtl = 15000; // 15sec
         PhotonNetwork.CreateRoom(createRoomName, roomOps);
     }
 
