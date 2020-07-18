@@ -53,8 +53,8 @@ public class DrawingGallery : MonoBehaviour
         randomisedDownloadPaths = RandomiseIntArray(players.Length);
     }
 
-    // can unit test this
-    private int[] RandomiseIntArray(int len)
+
+    public int[] RandomiseIntArray(int len)
     {
         int[] result = new int[len];
         // initialise the array

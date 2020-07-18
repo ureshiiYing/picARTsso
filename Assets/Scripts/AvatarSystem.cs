@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class AvatarSystem : MonoBehaviour
 {
-    [SerializeField] private RawImage display;
+    public RawImage display;
 
     private Texture2D myAvatar; // stores the selected avatar
     private Texture2D[] avatars;

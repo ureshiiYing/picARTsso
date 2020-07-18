@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 namespace Tests
 {
-    public class NewTestScript
+    public class DrawingGalleryTestScript
     {
         private DrawingGallery gallery;
 
@@ -21,11 +21,21 @@ namespace Tests
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
         // `yield return null;` to skip a frame.
         [UnityTest]
-        public IEnumerator RandomiseIntArrTest()
+        public IEnumerator RandomiseIntArrIsRandomisedTest()
         {
-            // Use the Assert class to test conditions.
-            // Use yield to skip a frame.
+            bool res = true;
+            int[] v1 = gallery.RandomiseIntArray(6);
             yield return null;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (v1[i] != i)
+                {
+                    res = false;
+                }
+            }
+
+            Assert.AreEqual(false, res);
         }
     }
 }

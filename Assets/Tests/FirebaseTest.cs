@@ -112,5 +112,15 @@ namespace Tests
 
             LogAssert.Expect(LogType.Error, "Failed to delete");
         }
+
+        [UnityTest]
+        public IEnumerator FirebaseTest_SavingImageOnDeviceSuccessful()
+        {
+            string path = "gs://picartsso.appspot.com/drawings/844740b3-1ec5-43aa-ac47-de8b3970448c.png";
+            uploader.SaveDrawingOnDevice(path);
+            yield return new WaitForSeconds(1f);
+
+            LogAssert.Expect(LogType.Log, "SaveToGallery called successfully in the Editor");
+        }
     }
 }
