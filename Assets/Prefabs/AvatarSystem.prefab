@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1352301139683991027}
-  - component: {fileID: 2390781621900332253}
   m_Layer: 5
   m_Name: AvatarSystem
   m_TagString: Untagged
@@ -39,19 +38,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 82}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2390781621900332253
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5730090234802978146}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54e8646ca1f372c4e9733c13ecb462e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  display: {fileID: 1110166954134664681}
 --- !u!1 &6155706829467999698
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,7 +156,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2390781621900332253}
+      - m_Target: {fileID: 0}
         m_MethodName: Toggle
         m_Mode: 3
         m_Arguments:
@@ -245,7 +231,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 9b31d80b570ec9a42aba42f88a64682d, type: 3}
+  m_Texture: {fileID: 2800000, guid: c715687eb56005943bb3992085855696, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -370,7 +356,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2390781621900332253}
+      - m_Target: {fileID: 0}
         m_MethodName: Toggle
         m_Mode: 3
         m_Arguments:

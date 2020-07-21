@@ -62,17 +62,17 @@ public class AvatarSystem : MonoBehaviour
         myAvatar = avatars[pointer];
 
         // set in player info? not sure if a player exists on the network at menu screen.
-        //StartCoroutine(CoUpdatePlayerAvatar());
+        StartCoroutine(CoUpdatePlayerAvatar());
     }
 
     private IEnumerator CoUpdatePlayerAvatar()
     {
         // code to set player URL
         ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
-        playerProps.Add("Avatar", myAvatar);
+        playerProps.Add("Avatar", pointer);
         Debug.Log("added");
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
-
+        Debug.Log("set avatar");
         yield return new WaitForSeconds(1f);
 
     }

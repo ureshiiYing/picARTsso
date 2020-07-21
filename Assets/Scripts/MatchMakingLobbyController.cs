@@ -265,6 +265,8 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     // return to choose or create
     public void LobbyCancel()
     {
+        choosePanel.SetActive(true);
+        lobbyPanel.SetActive(false);
         PhotonNetwork.LeaveLobby();
     }
 

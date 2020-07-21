@@ -3,10 +3,12 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
@@ -68,12 +70,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     private Coroutine CoTimer;
     [SerializeField] private GameObject timerUI;
 
-    // winner UI
+    // winner for the round UI
     [SerializeField] private GameObject winnerPanel;
     [SerializeField] private TMP_Text winnerNameText;
 
     // game winner UI
-    [SerializeField] private TMP_Text gameWinnerText;
+    [SerializeField] private GameObject firstPlace;
+    [SerializeField] private GameObject secPlace;
+    [SerializeField] private GameObject thirdPlace;
+    [SerializeField] private GameObject winnerCardPrefab;
+
+
 
     #endregion
 
@@ -250,7 +257,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (score >= numOfPointsToWin)
         {
             state = GameState.Ending;
-            EndGame_S(player);
+            EndGame_S();
         } 
         else
         {
@@ -620,8 +627,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (PhotonNetwork.IsMasterClient) 
         { 
-            // check if there is a winner otherwise
-            ScoreCheck(winner);
+            // when thrs only two or less players just end the game
+            if (players.Length < 3)
+            {
+                EndGame_S();
+            }
+            else
+            {
+                // check if there is a winner otherwise
+                ScoreCheck(winner);
+            }
+            
         }
 
     }
@@ -650,9 +666,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Debug.Log(currHost + " " + players[currHost].NickName);
     }
 
-    public void EndGame_S(Player player)
+    public void EndGame_S()
     {
-        object[] package = new object[] { player };
+        object[] package = scoreboard.GetTopThreePlayers();
 
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.EndGame,
@@ -664,14 +680,27 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void EndGame_R(object[] data)
     {
-        Player player = (Player)data[0];
+        GameObject[] forMyTransforms = new GameObject[3] { firstPlace, secPlace, thirdPlace };
+        
+        // display winner
+        for(int i = 0; i < 3; i++)
+        {
+            if (data[i] != null)
+            {
+                SettingWinners(forMyTransforms[i], data[i].ToString(), (Texture2D)data[i + 3]);
+            }
+        }
 
         judgingUI.SetActive(false);
         endingUI.SetActive(true);
 
-        // display winner
-        gameWinnerText.GetComponent<TMP_Text>().text = player.NickName + " !";
     }
 
+    private void SettingWinners(GameObject winner, string name, Texture2D avatar)
+    {
+        GameObject temp = Instantiate(winnerCardPrefab, winner.transform);
+        temp.GetComponentInChildren<TMP_Text>().text = name;
+        temp.GetComponentInChildren<RawImage>().texture = avatar;
+    }
     #endregion
 }

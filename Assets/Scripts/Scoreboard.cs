@@ -14,6 +14,7 @@ public class Scoreboard : MonoBehaviour
     private GameObject scoreListingPrefab;
 
     private Player[] sortedPlayers;
+    private Texture2D[] avatarsFile;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +26,7 @@ public class Scoreboard : MonoBehaviour
         }
         StartCoroutine(CoRefresh());
 
+        avatarsFile = Resources.LoadAll<Texture2D>("Avatar");
     }
 
     private IEnumerator CoScore(Player player)
@@ -122,8 +124,12 @@ public class Scoreboard : MonoBehaviour
                 TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
                 TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
                 GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
+                RawImage avatar = tempListing.transform.GetChild(3).GetComponent<RawImage>();
+
                 scoreText.text = player.CustomProperties["Score"].ToString();
                 nameText.text = player.NickName.ToString();
+                int ptr = (int) player.CustomProperties["Avatar"];
+                avatar.texture = avatarsFile[ptr];
                 if (player != PhotonNetwork.LocalPlayer)
                 {
                     reportButton.GetComponent<ReportButton>().WhenInstantiated(player);
@@ -160,5 +166,26 @@ public class Scoreboard : MonoBehaviour
             Debug.LogError("please set submission toggle");
         }
     }
+
+    public object[] GetTopThreePlayers()
+    {
+        object[] res = new object[6];
+
+        for (int i = 0; i < sortedPlayers.Length; i++)
+        {
+            if (i > 3)
+            {
+                break;
+            }
+
+            res[i] = sortedPlayers[i].NickName;
+            res[i + 3] = avatarsFile[(int)sortedPlayers[i].CustomProperties["Avatar"]];
+        }
+
+        
+        return res;
+    }
+
+
 
 }
