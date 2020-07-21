@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
 
             case EventCodes.EndGame:
-                EndGame_R(o);
+                EndGame_R();
                 break;
         }
     }
@@ -668,19 +668,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void EndGame_S()
     {
-        object[] package = scoreboard.GetTopThreePlayers();
 
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.EndGame,
-            package,
+            null,
             new RaiseEventOptions { Receivers = ReceiverGroup.All },
             new SendOptions { Reliability = true }
         );
     }
 
-    private void EndGame_R(object[] data)
+    private void EndGame_R()
     {
         GameObject[] forMyTransforms = new GameObject[3] { firstPlace, secPlace, thirdPlace };
+        object[] data = scoreboard.GetTopThreePlayers();
         
         // display winner
         for(int i = 0; i < 3; i++)
