@@ -267,9 +267,8 @@ public class UploadDownloadDrawing : MonoBehaviour
 
             // saves to android gallery, does not do anything on the editor
             NativeGallery.SaveImageToGallery(downloadTask.Result, "picARTsso", screenshotRef.Name);
-
-            // show a pop up when it's successful
-            // check if application.persistentdatapath NGallery folder is empty, then show popup
+            
+            
         }
         else
         {

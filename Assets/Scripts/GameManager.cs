@@ -2,12 +2,9 @@
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -57,6 +54,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private WordGenController wordGenerator;
     [SerializeField] private UploadDownloadDrawing uploader;
     [SerializeField] private GameObject drawingUI;
+    [SerializeField] private GameObject confirmSubmitPanel;
     [SerializeField] private GameObject judgingUI;
     [SerializeField] private GameObject pickPanel;
     [SerializeField] private Scoreboard scoreboard;
@@ -179,12 +177,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         TriggerNextRound_S();
     }
 
-    
-
-    // save the upload string, update player status
-    // called by the submit button on drawing UI
     public void OnSubmit()
     {
+        confirmSubmitPanel.SetActive(true);
+    }
+
+    // save the upload string, update player status
+    // called by the inner submit button on drawing UI
+    public void OnReadyToSubmit()
+    {
+        // close the cfm panel if active
+        confirmSubmitPanel.SetActive(false);
+
         // upload and saves the drawing
         uploader.Save();
 
@@ -388,6 +392,24 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         state = GameState.HostPlaying;
         // reset the submission status
         StartCoroutine(CoResetSubmissionStatus());
+        // delete the drawings from previous round
+        /*
+        if (PhotonNetwork.IsMasterClient) {
+            foreach (string path in judgingUI.GetComponent<DrawingGallery>().GetDownloadPaths())
+            {
+                if (path != null)
+                {
+                    try
+                    {
+                        uploader.DeleteDrawing(path);
+                    }
+                    catch
+                    {
+                        Debug.Log("could not delete");
+                    }
+                }
+            }
+        */
 
         // redirect normal players to waiting room and host to host room
         // redirect the players
@@ -472,7 +494,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     && PhotonNetwork.LocalPlayer != players[currHost])
                 {
                     // if hasnt submit and not the host
-                    OnSubmit();
+                    OnReadyToSubmit();
                 }
             }
         }
@@ -693,6 +715,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         judgingUI.SetActive(false);
         endingUI.SetActive(true);
+
 
     }
 

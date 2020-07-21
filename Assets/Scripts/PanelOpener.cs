@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// should be attached to a button... not panel omy
 public class PanelOpener : MonoBehaviour
 {
     public GameObject panel;
@@ -12,6 +13,16 @@ public class PanelOpener : MonoBehaviour
         {
             bool isActive = panel.activeSelf;
             panel.SetActive(!isActive);
+        }
+    }
+
+    public void TogglePanelWhileMinding(GameObject thatPanel)
+    {
+        TogglePanel();
+
+        if(thatPanel.activeSelf)
+        {
+            thatPanel.SetActive(false);
         }
     }
 

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Assertions;
 using Photon.Realtime;
 using TMPro;
+using System;
 
 public class DrawingGallery : MonoBehaviour
 {
@@ -53,6 +54,11 @@ public class DrawingGallery : MonoBehaviour
         randomisedDownloadPaths = RandomiseIntArray(players.Length);
     }
 
+    public string[] GetDownloadPaths()
+    {
+        return downloadPaths;
+    }
+
 
     public int[] RandomiseIntArray(int len)
     {
@@ -65,7 +71,7 @@ public class DrawingGallery : MonoBehaviour
         // randomise Knuth Shuffle algo
         for (int i = 1; i < len; i++)
         {
-            int rnd = Random.Range(0, i);
+            int rnd = UnityEngine.Random.Range(0, i);
             // swap values at index i and rnd
             int temp = result[i];
             result[i] = result[rnd];
@@ -145,7 +151,20 @@ public class DrawingGallery : MonoBehaviour
     // to be called by save button click
     public void SaveCurrentDrawing()
     {
-        uploader.SaveDrawingOnDevice(downloadPaths[GetActualIndexOfDownloadPathAt(drawingIndex)]);
+        try
+        {
+            uploader.SaveDrawingOnDevice(downloadPaths[GetActualIndexOfDownloadPathAt(drawingIndex)]);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+        finally
+        {
+            // show a pop up when it's successful
+            // check if application.persistentdatapath NGallery folder is empty, then show popup
+            FindObjectOfType<ErrorMessagesHandler>().DisplayError("Successfully saved inside your gallery.");
+        }
     }
 
 }

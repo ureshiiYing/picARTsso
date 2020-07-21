@@ -4527,51 +4527,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Error Display Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0.00006866455
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0.00002670288
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.8964021
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.0071868896
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -0.014373779
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.61700004
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.0968969
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682277, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb17fefe7f49c47e49d695b1a2f9979e, type: 3}
 --- !u!1 &803681195
@@ -7410,7 +7365,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 29d2ab2814961bc49ad834c0e9752ca0, type: 3}
-    m_FontSize: 27
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
@@ -7854,7 +7809,7 @@ MonoBehaviour:
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
