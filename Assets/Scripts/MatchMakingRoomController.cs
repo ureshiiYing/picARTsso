@@ -225,19 +225,12 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel(multiplayerSceneIndex);
     }
 
-    private IEnumerator rejoinLobby()
-    {
-        PhotonNetwork.JoinLobby();
-        yield return new WaitForSeconds(1);
-    }
-
     public void BackOnClick()
     { 
         lobbyPanel.SetActive(true);
         roomPanel.SetActive(false);
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LeaveLobby();
-        StartCoroutine(rejoinLobby());
         networkObj.GetComponent<Photon.Pun.UtilityScripts.DisconnectsRecovery>().wasInRoom = false;
 
     }

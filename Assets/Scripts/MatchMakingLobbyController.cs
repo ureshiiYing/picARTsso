@@ -14,7 +14,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     [SerializeField]
     private GameObject mainPanel;
     [SerializeField]
-    private GameObject lobbyConnectButton;
+    private GameObject startGameButton;
     [SerializeField]
     private InputField playerNameInput;
     [SerializeField]
@@ -55,7 +55,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     {
         Debug.Log("Joined Master Server.");
         PhotonNetwork.AutomaticallySyncScene = true;
-        lobbyConnectButton.SetActive(true);
+        startGameButton.SetActive(true);
         roomListings = new List<RoomInfo>();
         isRoomPrivate = false;
         isPrivateToggle.SetIsOnWithoutNotify(false);
@@ -93,10 +93,10 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     }
 
     //enter lobby
-    public void JoinGameOnClick() // paired to join lobby button
+    public void JoinLobbyOnClick() // paired to join existing room button
     {
-        mainPanel.SetActive(false);
-        choosePanel.SetActive(true);
+        choosePanel.SetActive(false);
+        lobbyPanel.SetActive(true);
         PhotonNetwork.JoinLobby(); // joins lobby and receive updates on rooms
     }
 
@@ -168,14 +168,14 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
             }
 
             //check if pw protected
-            if ((bool) roomToBeJoined.CustomProperties["IsPrivate"])
+            if (roomToBeJoined != null && (bool) roomToBeJoined.CustomProperties["IsPrivate"])
             {
                 passwordPanel.SetActive(true);
             }
             else
             {
                 Debug.Log("Joining room now");
-                PhotonNetwork.JoinRoom(roomToBeJoined.Name);
+                PhotonNetwork.JoinRoom(joinRoomName);
             }
 
         }
@@ -262,11 +262,9 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Tried to create a new room but failed, there must already be a room with same name.");
     }
 
-    // return to lobby
-    public void MatchmakingCancel()
+    // return to choose or create
+    public void LobbyCancel()
     {
-        mainPanel.SetActive(true);
-        choosePanel.SetActive(false);
         PhotonNetwork.LeaveLobby();
     }
 
