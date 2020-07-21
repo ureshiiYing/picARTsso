@@ -4,13 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 {
     [SerializeField]
     private int multiplayerSceneIndex;
 
-
+    [SerializeField]
+    private GameObject mainPanel;
     [SerializeField]
     private GameObject lobbyPanel;
     [SerializeField]
@@ -22,6 +24,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 
     [SerializeField]
     private GameObject startButton;
+    [SerializeField]
+    private GameObject networkObj;
 
     [SerializeField]
     private GameObject timeLimit;
@@ -35,6 +39,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     private GameObject selectThemeLabel;
     [SerializeField]
     private GameObject numOfPointsLabel;
+    [SerializeField]
+    private TMP_Text password;
 
     [SerializeField]
     private Transform playerContainer;
@@ -68,21 +74,18 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
     // reload list of players & change panels
     public override void OnJoinedRoom()
     {
+        networkObj.GetComponent<Photon.Pun.UtilityScripts.DisconnectsRecovery>().wasInRoom = true;
+        mainPanel.SetActive(false);
         createPanel.SetActive(false);
         lobbyPanel.SetActive(false);
         joinPanel.SetActive(false);
         roomPanel.SetActive(true);
         roomsNameDisplay.text = PhotonNetwork.CurrentRoom.Name;
+        password.text = "Password: " + (string) PhotonNetwork.CurrentRoom.CustomProperties["Password"];
         if (PhotonNetwork.IsMasterClient)
         {
-            //redundant tbh
-            startButton.SetActive(true);
-            timeLimit.gameObject.SetActive(true);
-            selectTheme.gameObject.SetActive(true);
-            numOfPoints.gameObject.SetActive(true);
-            timeLimitLabel.SetActive(true);
-            selectThemeLabel.SetActive(true);
-            numOfPointsLabel.SetActive(true);
+            PhotonNetwork.CurrentRoom.PlayerTtl = 0; // 0sec
+            PhotonNetwork.CurrentRoom.EmptyRoomTtl = 0; // 0sec
         }
         else
         {
@@ -217,13 +220,15 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
             return;
         }
         PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.CurrentRoom.PlayerTtl = 60000; // 60sec
+        PhotonNetwork.CurrentRoom.EmptyRoomTtl = 15000; // 15sec
         PhotonNetwork.LoadLevel(multiplayerSceneIndex);
     }
 
-    IEnumerator rejoinLobby()
+    private IEnumerator rejoinLobby()
     {
-        yield return new WaitForSeconds(1);
         PhotonNetwork.JoinLobby();
+        yield return new WaitForSeconds(1);
     }
 
     public void BackOnClick()
@@ -233,6 +238,8 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.LeaveLobby();
         StartCoroutine(rejoinLobby());
+        networkObj.GetComponent<Photon.Pun.UtilityScripts.DisconnectsRecovery>().wasInRoom = false;
+
     }
 }
 

@@ -31,6 +31,7 @@ public class Scoreboard : MonoBehaviour
     {
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         playerOps.Add("Score", 0);
+        playerOps.Add("ReportCount", 0);
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
     }
@@ -58,24 +59,24 @@ public class Scoreboard : MonoBehaviour
         yield return new WaitForSeconds(1f);
         RefreshScoreboard();
     }
-        
+
 
     public Player[] SortByScore()
     {
         int len = PhotonNetwork.PlayerList.Length;
         Player[] players = new Player[len];
-        
+
         // local copy
-        for(int i = 0; i < len; i++)
+        for (int i = 0; i < len; i++)
         {
             players[i] = PhotonNetwork.PlayerList[i];
         }
         // selection sort
-        for (int i = 0; i < len; i ++)
+        for (int i = 0; i < len; i++)
         {
             int currScore = (int)players[i].CustomProperties["Score"];
             int currIndex = i; // bcuz have to separate out score and player
-            for (int j = i; j < len; j ++)
+            for (int j = i; j < len; j++)
             {
                 int tempScore = (int)players[j].CustomProperties["Score"];
                 if (tempScore > currScore)
@@ -115,14 +116,26 @@ public class Scoreboard : MonoBehaviour
         Player[] players = SortByScore();
         foreach (Player player in players)
         {
-            GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
-            TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
-            TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
-            scoreText.text = player.CustomProperties["Score"].ToString();
-            nameText.text = player.NickName.ToString();
+            if (!player.IsInactive)
+            {
+                GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
+                TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
+                TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
+                GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
+                scoreText.text = player.CustomProperties["Score"].ToString();
+                nameText.text = player.NickName.ToString();
+                if (player != PhotonNetwork.LocalPlayer)
+                {
+                    reportButton.GetComponent<ReportButton>().WhenInstantiated(player);
+                }
+                else
+                {
+                    reportButton.SetActive(false);
+                }
+            }
         }
     }
-
+    
     public void ToggleSubmissionStatus(Player player)
     {
         Toggle submissionStatus = null;

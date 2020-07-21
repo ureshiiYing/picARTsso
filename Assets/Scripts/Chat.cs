@@ -62,7 +62,7 @@ public class Chat : MonoBehaviour, IChatClientListener
             }
             GameObject tempListing = Instantiate(messageListingPrefab, messageContainer);
             Text tempText = tempListing.transform.GetComponent<Text>();
-            tempText.text = string.Format("{2} ", "", senders[i], messages[i]); //wtfisthis
+            tempText.text = (string)messages[i]; //wtfisthis
         }
 
         // noti icon spawn

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -214,7 +215,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
         playerProps.Add("hasSubmitted", false);
-        Debug.Log("added");
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
 
         yield return new WaitForSeconds(1f);
@@ -259,13 +259,35 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-
-    
-
-    public void PlayAgain()
+    // load menu scene and exit room
+    public void ReturnToMainMenu()
     {
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0);
 
     }
+
+
+    // load menu scene and into room panel
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(0);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = true;
+        }
+    }
+
+    // when current masterclient disconnects, new masterclient handles the countdown
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        base.OnMasterClientSwitched(newMasterClient);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            InitializeTimer(currTime);
+        }
+    }
+
 
     // used to initialise and reinitialise timer
     private void InitializeTimer(int time)
@@ -297,7 +319,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         currTime -= 1;
 
-        if (currTime < 0) 
+        if (currTime < 0 || !PhotonNetwork.IsMasterClient) 
         {
             CoTimer = null;
             
@@ -424,10 +446,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (currTime <= 0)
         {
-            if (state == GameState.HostPlaying)
+            if (state == GameState.HostPlaying && PhotonNetwork.IsMasterClient)
             {
                 // if the host did not manage to input in time, automatically skipped.
-                OnHostSkip();
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    OnHostSkip();
+                }
+                else if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
+                {
+                    wordGenerator.GenerateWord();
+                }
             }
             else if (state == GameState.PlayerPlaying)
             {
