@@ -116,19 +116,22 @@ public class Scoreboard : MonoBehaviour
         Player[] players = SortByScore();
         foreach (Player player in players)
         {
-            GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
-            TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
-            TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
-            GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
-            scoreText.text = player.CustomProperties["Score"].ToString();
-            nameText.text = player.NickName.ToString();
-            if (true) //player != PhotonNetwork.LocalPlayer)
+            if (!player.IsInactive)
             {
-                reportButton.GetComponent<ReportButton>().WhenInstantiated(player);
-            }
-            else
-            {
-                reportButton.SetActive(false);
+                GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
+                TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();
+                TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
+                GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
+                scoreText.text = player.CustomProperties["Score"].ToString();
+                nameText.text = player.NickName.ToString();
+                if (player != PhotonNetwork.LocalPlayer)
+                {
+                    reportButton.GetComponent<ReportButton>().WhenInstantiated(player);
+                }
+                else
+                {
+                    reportButton.SetActive(false);
+                }
             }
         }
     }

@@ -8,7 +8,9 @@ using UnityEngine.SceneManagement;
 public class ReportController : MonoBehaviourPunCallbacks
 {
     public ArrayList reportedPlayers;
-    private bool isClicked;
+
+    // because onLeftRoom callback will be called if disconnected
+    private bool leaveRoomDueToReport = false;
 
     [SerializeField]
     private GameObject errorPanel;
@@ -20,7 +22,7 @@ public class ReportController : MonoBehaviourPunCallbacks
 
     public void AddVote(Player player)
     {
-        if (isClicked)
+        if (reportedPlayers.Contains(player))
         {
             // replace with user messsage
             errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Already reported this player.");
@@ -34,6 +36,9 @@ public class ReportController : MonoBehaviourPunCallbacks
 
     private IEnumerator CoAddVote(Player player)
     {
+        // create chat message to see who reported who
+        FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+            PhotonNetwork.LocalPlayer.NickName + " has voted to kick " + player.NickName + ".");
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         int numReported = (int)player.CustomProperties["ReportCount"] + 1;
         playerOps.Add("ReportCount", numReported);
@@ -41,9 +46,6 @@ public class ReportController : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1f);
 
-        // create chat message to see who reported who
-        FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
-            PhotonNetwork.LocalPlayer.NickName + " has voted to kick " + player.NickName + ".");
         Debug.Log(player.NickName + " reported by " + (int)player.CustomProperties["ReportCount"]);
         reportedPlayers.Add(player);
 
@@ -72,6 +74,7 @@ public class ReportController : MonoBehaviourPunCallbacks
     {
         FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
             PhotonNetwork.LocalPlayer.NickName + " has been kicked.");
+        leaveRoomDueToReport = true;
         PhotonNetwork.LeaveRoom(); // load lobby scene, returns to master server
     }
 
@@ -109,9 +112,17 @@ public class ReportController : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        Debug.Log("leave room called");
-        // message on chat to say theyre kicked
-        SceneManager.LoadScene(0);
+        if (leaveRoomDueToReport)
+        {
+            Debug.Log("leave room called");
+            // message on chat to say theyre kicked
+            SceneManager.LoadScene(0);
+        }
 
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        StartCoroutine(FindObjectOfType<Scoreboard>().CoRefresh());
     }
 }

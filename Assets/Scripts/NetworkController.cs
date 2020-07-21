@@ -5,18 +5,18 @@ using UnityEngine;
 
 public class NetworkController : MonoBehaviourPunCallbacks
 {
-    private void Awake()
-    {
-        DontDestroyOnLoad(this.gameObject);
-    }
     // Start is called before the first frame update
     void Start()
     {
-        PhotonNetwork.ConnectUsingSettings(); // connect to master server
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("we are connected to master server" + PhotonNetwork.CloudRegion + " :)!"); 
+        Debug.Log(PhotonNetwork.NetworkClientState);
+        if (PhotonNetwork.NetworkClientState == ClientState.Joined)
+        {
+            FindObjectOfType<MatchMakingRoomController>().OnJoinedRoom();
+        }
+        else if (PhotonNetwork.NetworkClientState == ClientState.PeerCreated ||
+            PhotonNetwork.NetworkClientState == ClientState.Disconnected)
+        {
+            PhotonNetwork.ConnectUsingSettings(); // connect to master server
+        }
     }
 }

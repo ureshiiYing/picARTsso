@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -90,6 +91,7 @@ namespace Photon.Pun.UtilityScripts
         private void Start()
         {
             InvokeRepeating("CheckAction", 0, 1f);
+            wasInRoom = PhotonNetwork.CurrentRoom != null;
         }
 
         private void CheckAction()
@@ -146,9 +148,18 @@ namespace Photon.Pun.UtilityScripts
             {
                 return;
             }
-            rejoinCalled = false;
-            Debug.LogErrorFormat("Quick rejoin failed with error code: {0} & error message: {1}", returnCode, message);
-            // insert kicked from game notice for being idle for too long, returns to menu scene promptly after 3 seconds
+            rejoinCalled = false;    
+            Debug.LogFormat("Quick rejoin failed with error code: {0} & error message: {1}", returnCode, message);
+            StartCoroutine(RejoinRoomFailed(message));
+        }
+
+        // insert kicked from game notice for being idle for too long, returns to menu scene promptly after 3 seconds
+        private IEnumerator RejoinRoomFailed(string message)
+        {
+            FindObjectOfType<ErrorMessagesHandler>().DisplayError(
+                string.Format("Failed to rejoin room: {0}. Please rejoin game.", message));
+            yield return new WaitForSecondsRealtime(3.0f);
+            SceneManager.LoadScene(0);
         }
 
         public override void OnJoinedRoom()
@@ -169,29 +180,30 @@ namespace Photon.Pun.UtilityScripts
             }
             else
             {
-                bool wasLastActivePlayer = true;
-                if (!persistenceEnabled)
-                {
-                    for (int i = 0; i < PhotonNetwork.PlayerListOthers.Length; i++)
-                    {
-                        if (!PhotonNetwork.PlayerListOthers[i].IsInactive)
-                        {
-                            wasLastActivePlayer = false;
-                            break;
-                        }
-                    }
-                }
-                if ((PhotonNetwork.CurrentRoom.PlayerTtl < 0 || PhotonNetwork.CurrentRoom.PlayerTtl > minTimeRequiredToRejoin) // PlayerTTL checks
-                  && (!wasLastActivePlayer || PhotonNetwork.CurrentRoom.EmptyRoomTtl > minTimeRequiredToRejoin || persistenceEnabled)) // EmptyRoomTTL checks
-                {
-                    Debug.Log("PhotonNetwork.ReconnectAndRejoin called");
-                    rejoinCalled = PhotonNetwork.ReconnectAndRejoin();
-                }
-                else
-                {
-                    Debug.Log("PhotonNetwork.ReconnectAndRejoin not called, PhotonNetwork.Reconnect is called instead.");
-                    reconnectCalled = PhotonNetwork.Reconnect();
-                }
+                // idk what this is i just copypasted this whole page and modified
+                //bool wasLastActivePlayer = true;
+                //if (!persistenceEnabled)
+                //{
+                //    for (int i = 0; i < PhotonNetwork.PlayerListOthers.Length; i++)
+                //    {
+                //        if (!PhotonNetwork.PlayerListOthers[i].IsInactive)
+                //        {
+                //            wasLastActivePlayer = false;
+                //            break;
+                //        }
+                //    }
+                //}
+                //if ((PhotonNetwork.CurrentRoom.PlayerTtl < 0 || PhotonNetwork.CurrentRoom.PlayerTtl > minTimeRequiredToRejoin) // PlayerTTL checks
+                //  && (!wasLastActivePlayer || PhotonNetwork.CurrentRoom.EmptyRoomTtl > minTimeRequiredToRejoin || persistenceEnabled)) // EmptyRoomTTL checks
+                //{
+                //    Debug.Log("PhotonNetwork.ReconnectAndRejoin called");
+                //    rejoinCalled = PhotonNetwork.ReconnectAndRejoin();
+                //}
+                //else
+                //{
+                //    Debug.Log("PhotonNetwork.ReconnectAndRejoin not called, PhotonNetwork.Reconnect is called instead.");
+                //    reconnectCalled = PhotonNetwork.Reconnect();
+                //}
             }
         }
 

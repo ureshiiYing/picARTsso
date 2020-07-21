@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -152,7 +153,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // initialise game settings
     public void InitialiseGame()
     {
-        PhotonNetwork.AutomaticallySyncScene = false;
         timeLimit = (int) PhotonNetwork.CurrentRoom.CustomProperties["TimeLimit"];
         numOfPointsToWin = (int)PhotonNetwork.CurrentRoom.CustomProperties["MaxPoints"];
         players = PhotonNetwork.PlayerList;
@@ -259,12 +259,23 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    // load menu scene and exit room
+    public void ReturnToMainMenu()
+    {
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0);
 
-    
+    }
 
+
+    // load menu scene and into room panel
     public void PlayAgain()
     {
-
+        SceneManager.LoadScene(0);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = true;
+        }
     }
 
     // when current masterclient disconnects, new masterclient handles the countdown

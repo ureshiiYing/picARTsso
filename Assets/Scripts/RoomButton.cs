@@ -1,8 +1,10 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class RoomButton : MonoBehaviour
 {
@@ -10,22 +12,22 @@ public class RoomButton : MonoBehaviour
     private Text nameText;
     [SerializeField]
     private Text sizeText;
+    [SerializeField]
+    private Image isPrivateImage;
 
     private string roomName;
-    private int roomSize;
-    private int playerCount;
 
     public void JoinRoomOnClick()
     {
-        PhotonNetwork.JoinRoom(roomName);
+        FindObjectOfType<MatchMakingLobbyController>().StartJoinRoomProcedure(roomName);
     }
 
-    public void SetRoom(string nameIn, int sizeIn, int countIn)
+
+    public void SetRoom(RoomInfo room)
     {
-        roomName = nameIn;
-        roomSize = sizeIn;
-        playerCount = countIn;
-        nameText.text = nameIn;
-        sizeText.text = countIn + "/" + sizeIn;
+        roomName = room.Name;
+        nameText.text = roomName;
+        sizeText.text = room.PlayerCount + "/" + room.MaxPlayers;
+        isPrivateImage.gameObject.SetActive((bool)room.CustomProperties["IsPrivate"]);
     }
 }

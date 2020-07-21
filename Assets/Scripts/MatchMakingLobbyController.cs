@@ -25,12 +25,23 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     private GameObject choosePanel;
     [SerializeField]
     private GameObject errorPanel;
+    [SerializeField]
+    private GameObject passwordPanel;
+    [SerializeField]
+    private TMP_InputField joinPassword;
+    [SerializeField]
+    private TMP_InputField createPassword;
+    [SerializeField]
+    private Toggle isPrivateToggle;
 
 
     private string joinRoomName;
+
     private string createRoomName;
     private int createRoomSize;
-    private bool isRoomPublic;
+    private bool isRoomPrivate;
+    private string password;
+    private RoomInfo roomToBeJoined;
 
     private List<RoomInfo> roomListings; // list of current rooms
     [SerializeField]
@@ -42,12 +53,17 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     // playerprefs caches previously keyed username
     public override void OnConnectedToMaster()
     {
+        Debug.Log("Joined Master Server.");
         PhotonNetwork.AutomaticallySyncScene = true;
         lobbyConnectButton.SetActive(true);
         roomListings = new List<RoomInfo>();
-        isRoomPublic = true;
+        isRoomPrivate = false;
+        isPrivateToggle.SetIsOnWithoutNotify(false);
+        createPassword.text = "";
+        createPassword.gameObject.SetActive(false);
         createRoomSize = 3;
         joinRoomName = "";
+        password = "";
 
         // check if player keyed in a name, else generate one for them
         if(PlayerPrefs.HasKey("Nickname"))
@@ -116,26 +132,70 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         {
             GameObject tempListing = Instantiate(roomListingPrefab, roomsContainer);
             RoomButton tempButton = tempListing.GetComponent<RoomButton>();
-            tempButton.SetRoom(room.Name, room.MaxPlayers, room.PlayerCount);
+            tempButton.SetRoom(room);
         }
+    }
+
+    public override void OnJoinedLobby()
+    {
+        Debug.Log("Joined lobby.");
     }
 
     // linked to joinroomname input
     public void OnJoinRoomNameChanged(string nameIn)
     {
-        joinRoomName = nameIn;
+        joinRoomName = nameIn.Trim();
     }
 
-    public void JoinRoom()
+    public void StartJoinRoomProcedure(string roomName)
+    {
+        joinRoomName = roomName;
+        StartJoinRoomProcedure();
+    }
+
+
+    public void StartJoinRoomProcedure()
     {
         if (joinRoomName != "")
         {
-            Debug.Log("Joining room now");
-            PhotonNetwork.JoinRoom(joinRoomName);
+            foreach (RoomInfo room in roomListings) // loops through each room to get room info
+            {
+                if (room.Name == joinRoomName)
+                {
+                    roomToBeJoined = room;
+                    break;
+                }
+            }
+
+            //check if pw protected
+            if ((bool) roomToBeJoined.CustomProperties["IsPrivate"])
+            {
+                passwordPanel.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("Joining room now");
+                PhotonNetwork.JoinRoom(roomToBeJoined.Name);
+            }
+
         }
         else
         {
             errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Please enter a valid input for room name!");
+        }
+    }
+
+    public void AuthJoinRoomOnClick()
+    {
+        if (joinPassword.text == (string)roomToBeJoined.CustomProperties["Password"])
+        {
+            PhotonNetwork.JoinRoom(roomToBeJoined.Name);
+            joinPassword.text = "";
+            passwordPanel.SetActive(false);
+        }
+        else
+        {
+            FindObjectOfType<ErrorMessagesHandler>().DisplayError("Incorrect password!");
         }
     }
 
@@ -145,15 +205,27 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
     }
 
     // linked to public toggle
-    public void OnPublicChanged(bool boolean)
+    public void OnPrivateChanged(bool boolean)
     {
-        isRoomPublic = boolean;
+        isRoomPrivate = boolean;
+        createPassword.gameObject.SetActive(boolean);
+    }
+
+    // linked to create password inputfield
+    public void OnCreatePasswordChanged(string passIn)
+    {
+        string temp = passIn.Replace(" ", string.Empty); // remove all spaces in pw
+        password = temp;
     }
 
     // linked to createroomname input
     public void OnCreateRoomNameChanged(string nameIn)
     {
-        createRoomName = nameIn;
+        string temp = nameIn.Trim();
+        if (temp != "")
+        {
+            createRoomName = temp;
+        }
     }
 
     // linked to dropdown bar selecting size of room
@@ -164,15 +236,25 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
-        Debug.Log("Creating room now");
-        RoomOptions roomOps = new RoomOptions() { IsVisible = isRoomPublic, IsOpen = true, MaxPlayers = (byte)createRoomSize };
+        if (isRoomPrivate && password == "")
+        {
+            errorPanel.GetComponent<ErrorMessagesHandler>().DisplayError("Please enter a valid password.");
+            return;
+        }
+        RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)createRoomSize };
         roomOps.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
         roomOps.CustomRoomProperties.Add("MaxPoints", 5);
         roomOps.CustomRoomProperties.Add("Theme", "GeneralTheme");
         roomOps.CustomRoomProperties.Add("TimeLimit", 30);
-        roomOps.PlayerTtl = 60000; // 60sec
-        roomOps.EmptyRoomTtl = 15000; // 15sec
+        roomOps.CustomRoomProperties.Add("IsPrivate", isRoomPrivate);
+        roomOps.CustomRoomProperties.Add("Password", password);
         PhotonNetwork.CreateRoom(createRoomName, roomOps);
+        Debug.Log("Creating room now");
+    }
+
+    public override void OnCreatedRoom()
+    {
+        PhotonNetwork.CurrentRoom.SetPropertiesListedInLobby(new string[] { "Password", "IsPrivate" });
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
