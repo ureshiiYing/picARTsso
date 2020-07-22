@@ -4527,6 +4527,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Error Display Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0072021484
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb17fefe7f49c47e49d695b1a2f9979e, type: 3}
 --- !u!1 &803681195

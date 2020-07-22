@@ -439,7 +439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &105212574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4005,11 +4005,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Error Display Canvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402012430657682276, guid: cb17fefe7f49c47e49d695b1a2f9979e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.0072021484
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb17fefe7f49c47e49d695b1a2f9979e, type: 3}
@@ -9790,6 +9785,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 383257168}
+    - target: {fileID: 9202212551733998389, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c72f2fdff984d4db5876e4ba64b15520, type: 3}
 --- !u!1 &2053041493 stripped

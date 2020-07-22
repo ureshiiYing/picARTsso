@@ -146,10 +146,10 @@ RectTransform:
   m_Father: {fileID: 2402012429482487168}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.0968969, y: 0.5}
-  m_AnchorMax: {x: 0.8964021, y: 0.61700004}
-  m_AnchoredPosition: {x: 0.0071868896, y: 0.00002670288}
-  m_SizeDelta: {x: -0.014373779, y: 0.00006866455}
+  m_AnchorMin: {x: 0.0968969, y: 0.45000002}
+  m_AnchorMax: {x: 0.8997956, y: 0.61700004}
+  m_AnchoredPosition: {x: 1.0072021, y: -0.020339966}
+  m_SizeDelta: {x: -2.0143738, y: -0.040649414}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2402012430657682278
 CanvasRenderer:
@@ -172,13 +172,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.8537736, b: 0.8537736, a: 0.392}
+  m_Color: {r: 0.92549026, g: 0.7294118, b: 0.8588236, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -222,7 +222,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000015258789}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9007411069207189791
@@ -254,16 +254,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: testest
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 05593fcc41ecae14da9288fbab4caebf, type: 2}
-  m_sharedMaterial: {fileID: -5585390073509211187, guid: 05593fcc41ecae14da9288fbab4caebf,
+  m_fontAsset: {fileID: 11400000, guid: ff57c6f6d16862a49b0f57ee116fff0d, type: 2}
+  m_sharedMaterial: {fileID: 449675738080794658, guid: ff57c6f6d16862a49b0f57ee116fff0d,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282400958
-  m_fontColor: {r: 0.745283, g: 0.24959952, b: 0.24959952, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -281,8 +281,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 35
+  m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -318,17 +318,17 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
+  m_pageToDisplay: 0
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 2195455691122237297}
-    characterCount: 0
+    characterCount: 7
     spriteCount: 0
     spaceCount: 0
-    wordCount: 0
+    wordCount: 1
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
