@@ -9836,6 +9836,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 405974389381381240, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 405974389381381247, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ea93842150d7db341bce255e5b971c9c,
+        type: 3}
     - target: {fileID: 9202212549779164918, guid: c72f2fdff984d4db5876e4ba64b15520,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -9956,6 +9967,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 383257168}
+    - target: {fileID: 9202212551733998389, guid: c72f2fdff984d4db5876e4ba64b15520,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c72f2fdff984d4db5876e4ba64b15520, type: 3}
 --- !u!1 &2053041493 stripped
