@@ -36,6 +36,7 @@ public class Scoreboard : MonoBehaviour
         playerOps.Add("Score", 0);
         playerOps.Add("ReportCount", 0);
         playerOps.Add("hasSubmitted", false);
+        playerOps.Add("IsKicked", false);
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
     }
@@ -78,14 +79,17 @@ public class Scoreboard : MonoBehaviour
         // selection sort
         for (int i = 0; i < len; i++)
         {
-            int currScore = (int)players[i].CustomProperties["Score"];
+            int iScore = (int)players[i].CustomProperties["Score"];
             int currIndex = i; // bcuz have to separate out score and player
+            bool iKicked = (bool)players[i].CustomProperties["IsKicked"];
             for (int j = i; j < len; j++)
             {
-                int tempScore = (int)players[j].CustomProperties["Score"];
-                if (tempScore > currScore)
+                int jScore = (int)players[j].CustomProperties["Score"];
+                bool jKicked = (bool)players[i].CustomProperties["IsKicked"];
+
+                if (jScore > iScore && (iKicked == jKicked) || iKicked)
                 {
-                    currScore = tempScore;
+                    iScore = jScore;
                     currIndex = j;
                 }
             }
@@ -120,7 +124,7 @@ public class Scoreboard : MonoBehaviour
         Player[] players = SortByScore();
         foreach (Player player in players)
         {
-            if (!player.IsInactive)
+            if (!(bool)player.CustomProperties["IsKicked"])
             {
                 GameObject tempListing = Instantiate(scoreListingPrefab, scoreContainer);
                 TMP_Text scoreText = tempListing.transform.GetChild(1).GetComponent<TMP_Text>();

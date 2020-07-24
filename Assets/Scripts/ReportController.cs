@@ -1,20 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ReportController : MonoBehaviourPunCallbacks
+public class ReportController : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public ArrayList reportedPlayers;
 
     // because onLeftRoom callback will be called if disconnected
     private bool leaveRoomDueToReport = false;
+    private byte KickPlayer = 1;
 
     [SerializeField]
     private GameObject errorPanel;
 
+    public override void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    public override void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
     private void Start()
     {
         reportedPlayers = new ArrayList();
@@ -46,7 +57,6 @@ public class ReportController : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1f);
 
-        Debug.Log(player.NickName + " reported by " + (int)player.CustomProperties["ReportCount"]);
         reportedPlayers.Add(player);
 
         //this.gameObject.SetActive(false);
@@ -56,57 +66,59 @@ public class ReportController : MonoBehaviourPunCallbacks
     // check if theres enough votes to kickkk
     private IEnumerator CoCheckReported(Player player)
     {
-        // see if majority voted
-        Debug.Log("player: " + (int)player.CustomProperties["ReportCount"]);
-        Debug.Log("list: " + (int)PhotonNetwork.PlayerList.Length / 2);
 
         if ((int)player.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
         {
-            //KickPlayer_S(player);
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("KickPlayer", player);
+            KickPlayer_S(player);
+            ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
+            playerOps.Add("IsKicked", true);
+            player.SetCustomProperties(playerOps);
+            //PhotonView photonView = PhotonView.Get(this);
+            //photonView.RPC("KickPlayer", player);
         }
-        yield return null;
+        yield return new WaitForSecondsRealtime(1f);
     }
 
-    [PunRPC]
-    private void KickPlayer()
+    //[PunRPC]
+    //private void KickPlayer()
+    //{
+    //    leaveRoomDueToReport = true;
+    //    PhotonNetwork.LeaveRoom(); // load lobby scene, returns to master server
+    //}
+
+    public void OnEvent(EventData photonEvent)
     {
-        leaveRoomDueToReport = true;
-        PhotonNetwork.LeaveRoom(); // load lobby scene, returns to master server
+        byte eventCode = photonEvent.Code;
+        object[] data = (object[])photonEvent.CustomData;
+        Debug.Log("received event");
+
+        if (eventCode == KickPlayer)
+        {
+            KickPlayer_R((Player)data[0]);
+        }
     }
 
-    //public void KickPlayer_S(Player player)
-    //{
-    //    Debug.Log("kickplayer raised");
-    //    object[] package = new object[] { player };
+    public void KickPlayer_S(Player player)
+    {
+        Debug.Log("kickplayer raised");
+        object[] package = new object[] { player };
 
-    //    PhotonNetwork.RaiseEvent(
-    //        KickPlayer,
-    //        package,
-    //        new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient},
-    //        new SendOptions { Reliability = true }
-    //    );
-    //}
+        PhotonNetwork.RaiseEvent(
+            KickPlayer,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient, CachingOption = EventCaching.AddToRoomCache },
+            new SendOptions { Reliability = true }
+        );
+    }
 
-    //public void KickPlayer_R(Player player)
-    //{
-    //    Debug.Log("kickplayer called");
-    //    PhotonNetwork.CloseConnection(player);
-    //    Debug.Log(player.NickName + " has been kicked");
-    //}
+    public void KickPlayer_R(Player player)
+    {
+        Debug.Log("kickplayer called");
+        PhotonNetwork.CloseConnection(player);
+        Debug.Log(player.NickName + " has been kicked");
+    }
 
-    //public void OnEvent(EventData photonEvent)
-    //{
-    //    byte eventCode = photonEvent.Code;
-    //    object[] data = (object[])photonEvent.CustomData;
-    //    Debug.Log("received event");
 
-    //    if (eventCode == KickPlayer)
-    //    {
-    //        KickPlayer_R((Player)data[0]);
-    //    }
-    //}
 
     public override void OnLeftRoom()
     {
@@ -160,4 +172,5 @@ public class ReportController : MonoBehaviourPunCallbacks
             newPlayer.NickName + " has reconnected.");
         }
     }
+
 }
