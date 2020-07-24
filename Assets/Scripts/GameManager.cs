@@ -367,7 +367,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return downloadPlayer;
     }
 
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        StartCoroutine(CoCheckActiveHost(otherPlayer));
+    }
 
+    private IEnumerator CoCheckActiveHost(Player player)
+    {
+        yield return new WaitForSecondsRealtime(69f);
+        if (!PhotonNetwork.CurrentRoom.Players.ContainsValue(player) && PhotonNetwork.IsMasterClient)
+        {
+            TriggerNextRound_S();
+        }
+    }
 
     #endregion
 

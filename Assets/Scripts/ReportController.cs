@@ -60,7 +60,7 @@ public class ReportController : MonoBehaviourPunCallbacks
         Debug.Log("player: " + (int)player.CustomProperties["ReportCount"]);
         Debug.Log("list: " + (int)PhotonNetwork.PlayerList.Length / 2);
 
-        if ((int)player.CustomProperties["ReportCount"] >= (int)PhotonNetwork.PlayerList.Length / 2)
+        if ((int)player.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
         {
             //KickPlayer_S(player);
             PhotonView photonView = PhotonView.Get(this);
@@ -130,7 +130,7 @@ public class ReportController : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        if ((int)otherPlayer.CustomProperties["ReportCount"] >= (int)PhotonNetwork.PlayerList.Length / 2)
+        if ((int)otherPlayer.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
         {
             if (PhotonNetwork.IsMasterClient)
             {
