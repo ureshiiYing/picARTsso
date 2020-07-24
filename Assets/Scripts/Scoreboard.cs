@@ -138,6 +138,7 @@ public class Scoreboard : MonoBehaviour
                 avatar.texture = avatarsFile[ptr];
 
                 ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
+                Debug.Log(player.NickName + " scoreboard" + player.CustomProperties["hasSubmitted"].ToString());
 
                 if (player != PhotonNetwork.LocalPlayer)
                 {

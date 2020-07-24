@@ -5,6 +5,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
@@ -210,6 +211,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
 
         yield return new WaitForSeconds(1f);
+        Debug.Log("setting submitted" + PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"].ToString());
 
         // check if everyone has submitted
         if (DidAllSubmit())
@@ -373,6 +375,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    private IEnumerator CoResetSubmissionStatus()
+    {
+        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
+        playerProps.Add("hasSubmitted", false);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
+
+        yield return new WaitForSeconds(1f);
+
+        yield return StartCoroutine(scoreboard.CoRefresh());
+    }
+
     #endregion
 
 
@@ -398,7 +411,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         confirmSubmitPanel.SetActive(false);
         timerUI.SetActive(true);
         state = GameState.HostPlaying;
-        
+        // reset the submission status
+        StartCoroutine(CoResetSubmissionStatus());
         // delete the drawings from previous round
         /*
         if (PhotonNetwork.IsMasterClient) {
@@ -559,6 +573,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Player player = (Player)data[0];
         //change scoreboard toggle
         scoreboard.ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
+        Debug.Log(player.NickName + " submitted" + player.CustomProperties["hasSubmitted"].ToString());
     }
 
     public void OnAllSubmitted_S()
@@ -647,9 +662,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             Debug.Log("set score done");
         }
 
-        // reset the submission status
-        StartCoroutine(CoResetSubmissionStatus());
-
         yield return StartCoroutine(scoreboard.CoRefresh());
 
         if (PhotonNetwork.IsMasterClient) 
@@ -667,16 +679,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
             
         }
-
-    }
-
-    private IEnumerator CoResetSubmissionStatus()
-    {
-        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
-        playerProps.Add("hasSubmitted", false);
-        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
-
-        yield return new WaitForSeconds(1f);
 
     }
 
