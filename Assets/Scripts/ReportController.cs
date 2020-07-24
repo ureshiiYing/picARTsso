@@ -6,13 +6,13 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ReportController : MonoBehaviourPunCallbacks, IOnEventCallback
+public class ReportController : MonoBehaviourPunCallbacks //, IOnEventCallback
 {
     public ArrayList reportedPlayers;
 
     // because onLeftRoom callback will be called if disconnected
     private bool leaveRoomDueToReport = false;
-    private byte KickPlayer = 1;
+    //private byte KickPlayer = 1;
 
     [SerializeField]
     private GameObject errorPanel;
@@ -69,54 +69,54 @@ public class ReportController : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if ((int)player.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
         {
-            KickPlayer_S(player);
+            //KickPlayer_S(player);
             ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
             playerOps.Add("IsKicked", true);
             player.SetCustomProperties(playerOps);
-            //PhotonView photonView = PhotonView.Get(this);
-            //photonView.RPC("KickPlayer", player);
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("KickPlayer", player);
         }
         yield return new WaitForSecondsRealtime(1f);
     }
 
-    //[PunRPC]
-    //private void KickPlayer()
+    [PunRPC]
+    private void KickPlayer()
+    {
+        leaveRoomDueToReport = true;
+        PhotonNetwork.LeaveRoom(); // load lobby scene, returns to master server
+    }
+
+    //public void OnEvent(EventData photonEvent)
     //{
-    //    leaveRoomDueToReport = true;
-    //    PhotonNetwork.LeaveRoom(); // load lobby scene, returns to master server
+    //    byte eventCode = photonEvent.Code;
+    //    object[] data = (object[])photonEvent.CustomData;
+    //    Debug.Log("received event");
+
+    //    if (eventCode == KickPlayer)
+    //    {
+    //        KickPlayer_R((Player)data[0]);
+    //    }
     //}
 
-    public void OnEvent(EventData photonEvent)
-    {
-        byte eventCode = photonEvent.Code;
-        object[] data = (object[])photonEvent.CustomData;
-        Debug.Log("received event");
+    //public void KickPlayer_S(Player player)
+    //{
+    //    Debug.Log("kickplayer raised");
+    //    object[] package = new object[] { player };
 
-        if (eventCode == KickPlayer)
-        {
-            KickPlayer_R((Player)data[0]);
-        }
-    }
+    //    PhotonNetwork.RaiseEvent(
+    //        KickPlayer,
+    //        package,
+    //        new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient, CachingOption = EventCaching.AddToRoomCache },
+    //        new SendOptions { Reliability = true }
+    //    );
+    //}
 
-    public void KickPlayer_S(Player player)
-    {
-        Debug.Log("kickplayer raised");
-        object[] package = new object[] { player };
-
-        PhotonNetwork.RaiseEvent(
-            KickPlayer,
-            package,
-            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient, CachingOption = EventCaching.AddToRoomCache },
-            new SendOptions { Reliability = true }
-        );
-    }
-
-    public void KickPlayer_R(Player player)
-    {
-        Debug.Log("kickplayer called");
-        PhotonNetwork.CloseConnection(player);
-        Debug.Log(player.NickName + " has been kicked");
-    }
+    //public void KickPlayer_R(Player player)
+    //{
+    //    Debug.Log("kickplayer called");
+    //    PhotonNetwork.CloseConnection(player);
+    //    Debug.Log(player.NickName + " has been kicked");
+    //}
 
 
 
