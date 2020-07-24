@@ -72,8 +72,6 @@ public class ReportController : MonoBehaviourPunCallbacks
     [PunRPC]
     private void KickPlayer()
     {
-        FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
-            PhotonNetwork.LocalPlayer.NickName + " has been kicked.");
         leaveRoomDueToReport = true;
         PhotonNetwork.LeaveRoom(); // load lobby scene, returns to master server
     }
@@ -114,15 +112,49 @@ public class ReportController : MonoBehaviourPunCallbacks
     {
         if (leaveRoomDueToReport)
         {
-            Debug.Log("leave room called");
             // message on chat to say theyre kicked
-            SceneManager.LoadScene(0);
+            StartCoroutine(KickedFromGame());
         }
 
     }
 
+    // can abstract but...hm
+    // insert kicked from game notice for being toxic, returns to menu scene promptly after 3 seconds
+    private IEnumerator KickedFromGame()
+    {
+        FindObjectOfType<ErrorMessagesHandler>().DisplayError(
+            string.Format("You have been reported and kicked from the game."));
+        yield return new WaitForSecondsRealtime(3.0f);
+        SceneManager.LoadScene(0);
+    }
+
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        StartCoroutine(FindObjectOfType<Scoreboard>().CoRefresh());
+        if ((int)otherPlayer.CustomProperties["ReportCount"] >= (int)PhotonNetwork.PlayerList.Length / 2)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+                otherPlayer.NickName + " has been kicked.");
+            }
+            StartCoroutine(FindObjectOfType<Scoreboard>().CoRefresh());
+        }
+        else
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+                otherPlayer.NickName + " has disconnected.");
+            }
+        }
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+            newPlayer.NickName + " has reconnected.");
+        }
     }
 }
