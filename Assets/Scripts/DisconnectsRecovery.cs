@@ -54,7 +54,7 @@ namespace Photon.Pun.UtilityScripts
                 Debug.LogFormat("OnStateChanged from {0} to {1}, PeerState={2}", fromState, toState,
                     PhotonNetwork.NetworkingClient.LoadBalancingPeer.PeerState);
 
-                Debug.Log("Pending action raised");
+                //Debug.Log("Pending action raised");
                 pendingAction = true;
 
             }
@@ -69,21 +69,21 @@ namespace Photon.Pun.UtilityScripts
                 PhotonNetwork.NetworkingClient.LoadBalancingPeer.PeerState);
             if (rejoinCalled)
             {
-                Debug.Log("Rejoin failed, client disconnected");
+                //Debug.Log("Rejoin failed, client disconnected");
                 rejoinCalled = false;
                 return;
             }
 
             if (reconnectCalled)
             {
-                Debug.Log("Reconnect failed, client disconnected");
+                //Debug.Log("Reconnect failed, client disconnected");
                 reconnectCalled = false;
                 return;
             }
             lastDisconnectCause = cause;
             if (PhotonNetwork.NetworkingClient.State == ClientState.Disconnected)
             {
-                Debug.Log("Pending action raised");
+                //Debug.Log("Pending action raised");
                 pendingAction = true;
             }
         }
@@ -99,7 +99,7 @@ namespace Photon.Pun.UtilityScripts
             if (pendingAction)
             {
                 pendingAction = false;
-                Debug.Log("handle disconnect now");
+                //Debug.Log("handle disconnect now");
                 this.HandleDisconnect();
             }
         }
@@ -132,12 +132,12 @@ namespace Photon.Pun.UtilityScripts
             //}
             if (wasInRoom)
             {
-                Debug.Log("CheckAndRejoin called");
+                //Debug.Log("CheckAndRejoin called");
                 this.CheckAndRejoin();
             }
             else
             {
-                Debug.Log("PhotonNetwork.Reconnect called");
+                //Debug.Log("PhotonNetwork.Reconnect called");
                 reconnectCalled = PhotonNetwork.Reconnect();
             }
         }
@@ -175,7 +175,7 @@ namespace Photon.Pun.UtilityScripts
         {
             if (skipRejoinChecks)
             {
-                Debug.Log("PhotonNetwork.ReconnectAndRejoin called");
+                //Debug.Log("PhotonNetwork.ReconnectAndRejoin called");
                 rejoinCalled = PhotonNetwork.ReconnectAndRejoin();
             }
             else

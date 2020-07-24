@@ -81,11 +81,16 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         joinPanel.SetActive(false);
         roomPanel.SetActive(true);
         roomsNameDisplay.text = PhotonNetwork.CurrentRoom.Name;
-        password.text = "Password: " + (string) PhotonNetwork.CurrentRoom.CustomProperties["Password"];
+
+        password.text = "Password: " + (string)PhotonNetwork.CurrentRoom.CustomProperties["Password"];
+        password.gameObject.SetActive((bool)PhotonNetwork.CurrentRoom.CustomProperties["IsPrivate"]);
+
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.PlayerTtl = 0; // 0sec
             PhotonNetwork.CurrentRoom.EmptyRoomTtl = 0; // 0sec
+            // clears all cache, should work idk
+            PhotonNetwork.OpRemoveCompleteCache();
         }
         else
         {
@@ -219,10 +224,19 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         {
             return;
         }
-        PhotonNetwork.CurrentRoom.IsOpen = false;
-        PhotonNetwork.CurrentRoom.PlayerTtl = 60000; // 60sec
-        PhotonNetwork.CurrentRoom.EmptyRoomTtl = 15000; // 15sec
-        PhotonNetwork.LoadLevel(multiplayerSceneIndex);
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount >= 3)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.PlayerTtl = 60000; // 60sec
+            PhotonNetwork.CurrentRoom.EmptyRoomTtl = 15000; // 15sec
+            PhotonNetwork.LoadLevel(multiplayerSceneIndex);
+        }
+        else
+        {
+            FindObjectOfType<ErrorMessagesHandler>().DisplayError("Need minimum of 3 players to start a game!");
+        }
+        
     }
 
     public void BackOnClick()

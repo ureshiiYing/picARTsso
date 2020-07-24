@@ -18,5 +18,9 @@ public class NetworkController : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.ConnectUsingSettings(); // connect to master server
         }
+        else if (PhotonNetwork.NetworkClientState == ClientState.ConnectedToMasterServer)
+        {
+            PhotonNetwork.Disconnect();
+        }
     }
 }

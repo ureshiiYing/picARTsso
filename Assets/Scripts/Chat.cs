@@ -22,16 +22,29 @@ public class Chat : MonoBehaviour, IChatClientListener
     private GameObject messageListingPrefab; // gameobject containing text component
     private int maxMessages = 100;
 
+    private Coroutine CoReconnect;
+
     [SerializeField] private GameObject noti;
 
     // has yet to implement:
-    // 1) limit number of messages stored in chat
-    // 2) unsubscribe and disconnected from chat (retry connection?)
+    // reconnect
     // connect() -> onconnected() -> onsubscribed (fn call sequence)
 
+    //for debugging
     public void DebugReturn(ExitGames.Client.Photon.DebugLevel level, string message)
     {
-        return;
+        if (level == ExitGames.Client.Photon.DebugLevel.ERROR)
+        {
+            Debug.LogError(message);
+        }
+        else if (level == ExitGames.Client.Photon.DebugLevel.WARNING)
+        {
+            Debug.LogWarning(message);
+        }
+        else
+        {
+            Debug.Log(message);
+        }
     }
 
     public void OnChatStateChange(ChatState state)
@@ -42,12 +55,22 @@ public class Chat : MonoBehaviour, IChatClientListener
     // when connected to server, subscribe to chat channel of room
     public void OnConnected()
     {
-        chatClient.Subscribe(new string[] {channelName}); //subscribe to chat channel once connected to server
+        chatClient.Subscribe(new string[] {channelName}, -1); //subscribe to chat channel once connected to server
+        if (CoReconnect != null)
+        {
+            StopCoroutine(CoReconnect);
+            CoReconnect = null;
+        }
     }
 
     public void OnDisconnected()
     {
         Debug.Log("You have been disconnected!");
+        if (CoReconnect != null)
+        {
+            return;
+        }
+        CoReconnect = StartCoroutine(CoAttemptReconnect());
     }
 
     // updates chat display box
@@ -77,14 +100,16 @@ public class Chat : MonoBehaviour, IChatClientListener
         noti.SetActive(false);
     }
 
+    // for private message
     public void OnPrivateMessage(string sender, object message, string channelName)
     {
-        throw new System.NotImplementedException();
+        return;
     }
 
+    // for friendlists
     public void OnStatusUpdate(string user, int status, bool gotMessage, object message)
     {
-        throw new System.NotImplementedException();
+        return;
     }
 
     public void OnSubscribed(string[] channels, bool[] results)
@@ -133,7 +158,6 @@ public class Chat : MonoBehaviour, IChatClientListener
         {
             this.chatClient.PublishMessage(channelName, userID + ": " + messageInput.text);
             this.messageInput.text = "";
-            Debug.Log("sent message");
         }
     }
 
@@ -145,7 +169,6 @@ public class Chat : MonoBehaviour, IChatClientListener
             {
                 this.chatClient.PublishMessage(channelName, userID + ": " + messageInput.text);
                 this.messageInput.text = "";
-                Debug.Log("sent message");
             }
 
         }
@@ -154,6 +177,16 @@ public class Chat : MonoBehaviour, IChatClientListener
     void Start()
     {
         Connect();
+    }
+
+    private IEnumerator CoAttemptReconnect()
+    {
+        while (chatClient.State == ChatState.Disconnected)
+        {
+            this.chatClient.Connect(PhotonNetwork.PhotonServerSettings.AppSettings.AppIdChat,
+            PhotonNetwork.AppVersion, new AuthenticationValues(userID));
+            yield return new WaitForSeconds(2.0f);
+        }
     }
 
     // Update is called once per frame

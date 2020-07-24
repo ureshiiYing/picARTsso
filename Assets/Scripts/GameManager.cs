@@ -379,7 +379,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.StartNewRound,
             null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -432,7 +432,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.TriggerNextRound,
             null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient },
+            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -462,7 +462,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.RefreshTimer,
             package,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -509,7 +509,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.OnWordConfirmation,
             package,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -547,7 +547,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.OnSubmitToggle,
             package,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -564,7 +564,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.OnAllSubmitted,
             null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -611,7 +611,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.SetWinner,
             package,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -669,7 +669,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.SetNextHost,
             null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -690,11 +690,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void EndGame_S()
     {
-
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.EndGame,
             null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
             new SendOptions { Reliability = true }
         );
     }
@@ -716,8 +715,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         judgingUI.SetActive(false);
         endingUI.SetActive(true);
 
-
     }
+
 
     private void SettingWinners(GameObject winner, string name, Texture2D avatar)
     {
