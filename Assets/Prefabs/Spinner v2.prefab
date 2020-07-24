@@ -89,4 +89,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainIcon: {fileID: 405974389367847860}
   timeStep: 0.1
-  oneStepAngle: -30
+  oneStepAngle: -45

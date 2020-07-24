@@ -321,7 +321,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         string minutes = (currTime / 60).ToString("00");
         string seconds = (currTime % 60).ToString("00");
-        timerUI.GetComponent<TMP_Text>().text = $"{minutes}:{seconds}";
+        timerUI.GetComponent<TMP_Text>().text = $"{minutes} : {seconds}";
     }
 
     private IEnumerator Timer()
