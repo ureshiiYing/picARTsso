@@ -227,6 +227,7 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.CurrentRoom.PlayerCount >= 3)
         {
+            startButton.SetActive(false);
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.PlayerTtl = 60000; // 60sec
             PhotonNetwork.CurrentRoom.EmptyRoomTtl = 15000; // 15sec

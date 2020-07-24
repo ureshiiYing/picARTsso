@@ -10,6 +10,7 @@ public class ReportButton : MonoBehaviourPunCallbacks //, IOnEventCallback
 
     public void OnReportClicked()
     {
+        this.gameObject.SetActive(false);
         FindObjectOfType<ReportController>().AddVote(toBeKicked);
     }
 

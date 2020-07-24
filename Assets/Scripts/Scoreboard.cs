@@ -147,7 +147,7 @@ public class Scoreboard : MonoBehaviour
         Toggle submissionStatus = null;
 
         // find the ith position of the player in the sorted player array
-        for (int i = 0; i < sortedPlayers.Length; i++)
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
         {
             if (sortedPlayers[i] == player)
             {
