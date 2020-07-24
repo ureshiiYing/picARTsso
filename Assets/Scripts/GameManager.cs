@@ -44,8 +44,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private GameState state;
 
-    // fields for recording players
-    private static Player[] players;
     private int currHost;
 
     // GameObject
@@ -160,7 +158,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         timeLimit = (int) PhotonNetwork.CurrentRoom.CustomProperties["TimeLimit"];
         numOfPointsToWin = (int)PhotonNetwork.CurrentRoom.CustomProperties["MaxPoints"];
-        players = PhotonNetwork.PlayerList;
         
         currHost = 0;
 
@@ -350,7 +347,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public Player[] GetArrayOfPlayersWithoutHost()
     {
         Debug.Log("getting downloads");
-        int numOfPlayers = players.Length;
+        int numOfPlayers = PhotonNetwork.PlayerList.Length;
         Player[] downloadPlayer = new Player[numOfPlayers - 1]; // exclude the host
         int index = 0;
 
@@ -359,7 +356,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             // nd to exclude host
             if (i != currHost)
             {
-                downloadPlayer[index] = players[i];
+                downloadPlayer[index] = PhotonNetwork.PlayerList[i];
                 index++;
             }
         }
@@ -503,7 +500,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 // player ran out of time to draw, force submit
                 if (!(bool)PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"] 
-                    && PhotonNetwork.LocalPlayer != players[currHost])
+                    && PhotonNetwork.LocalPlayer != PhotonNetwork.PlayerList[currHost])
                 {
                     // if hasnt submit and not the host
                     OnReadyToSubmit();
@@ -662,7 +659,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PhotonNetwork.IsMasterClient) 
         { 
             // when thrs only two or less players just end the game
-            if (players.Length < 3)
+            if (PhotonNetwork.PlayerList.Length < 3)
             {
                 EndGame_S();
             }
@@ -697,7 +694,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             currHost += 1;
         }
-        Debug.Log(currHost + " " + players[currHost].NickName);
+        Debug.Log(currHost + " " + PhotonNetwork.PlayerList[currHost].NickName);
     }
 
     public void EndGame_S()
