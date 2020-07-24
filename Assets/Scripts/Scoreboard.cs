@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class Scoreboard : MonoBehaviour
 {
@@ -45,13 +46,13 @@ public class Scoreboard : MonoBehaviour
 
     public IEnumerator CoIncrementScore(Player player)
     {
-        Debug.Log("ori score: " + (int)player.CustomProperties["Score"]);
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         int newScore = (int)player.CustomProperties["Score"] + 1;
         Debug.Log("updating score: " + newScore);
         playerOps.Add("Score", newScore);
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
+
         Debug.Log("new score: " + (int)player.CustomProperties["Score"]);
     }
 
@@ -125,13 +126,14 @@ public class Scoreboard : MonoBehaviour
                 TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
                 GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
                 RawImage avatar = tempListing.transform.GetChild(3).GetComponent<RawImage>();
-                Toggle hasSubmit = tempListing.transform.GetChild(4).GetComponent<Toggle>();
 
-                hasSubmit.isOn = (bool)player.CustomProperties["HasSubmitted"];
                 scoreText.text = player.CustomProperties["Score"].ToString();
                 nameText.text = player.NickName.ToString();
                 int ptr = (int) player.CustomProperties["Avatar"];
                 avatar.texture = avatarsFile[ptr];
+
+                ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
+
                 if (player != PhotonNetwork.LocalPlayer)
                 {
                     reportButton.GetComponent<ReportButton>().WhenInstantiated(player);
@@ -144,7 +146,7 @@ public class Scoreboard : MonoBehaviour
         }
     }
     
-    public void ToggleSubmissionStatus(Player player)
+    public void ToggleSubmissionStatus(Player player, bool hasSubmitted)
     {
         Toggle submissionStatus = null;
 
@@ -153,15 +155,21 @@ public class Scoreboard : MonoBehaviour
         {
             if (sortedPlayers[i] == player)
             {
-                submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
+                try
+                {
+                    submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
+                } 
+                catch (Exception e)
+                {
+                    Debug.Log(scoreContainer.GetChild(i) + " " + e);
+                }
             }
         }
 
 
         if (submissionStatus != null)
         {
-            bool isActive = submissionStatus.isOn;
-            submissionStatus.isOn = !isActive;
+            submissionStatus.isOn = hasSubmitted;
         }
         else
         {

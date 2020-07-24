@@ -206,7 +206,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
         playerProps.Add("hasSubmitted", true);
-        Debug.Log("added");
+        Debug.Log("hasSubmitted bool added");
         PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
 
         yield return new WaitForSeconds(1f);
@@ -456,10 +456,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // called when the round ends
     public void TriggerNextRound_R()
     {
-        // only host can call this
-        //if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
-        //if (PhotonNetwork.IsMasterClient)
-        //{
         // change host first
         SetNextHost_S();
 
@@ -468,7 +464,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
 
         StartNewRound_S();
-        //}
     }
 
     public void RefreshTimer_S()
@@ -571,8 +566,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void OnSubmitToggle_R(object[] data)
     {
         Player player = (Player)data[0];
-        //change scoreboard toggle => to be implemented after implementing scoreboard behaviour
-        scoreboard.ToggleSubmissionStatus(player);
+        //change scoreboard toggle
+        scoreboard.ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
     }
 
     public void OnAllSubmitted_S()
@@ -666,6 +661,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PhotonNetwork.IsMasterClient) 
         { 
             // when thrs only two or less players just end the game
+            // this game logic abit weird
             if (PhotonNetwork.PlayerList.Length < 3)
             {
                 EndGame_S();

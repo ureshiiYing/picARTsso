@@ -11,6 +11,7 @@ public class NetworkController : MonoBehaviourPunCallbacks
         Debug.Log(PhotonNetwork.NetworkClientState);
         if (PhotonNetwork.NetworkClientState == ClientState.Joined)
         {
+            // TODO:
             FindObjectOfType<MatchMakingRoomController>().OnJoinedRoom();
         }
         else if (PhotonNetwork.NetworkClientState == ClientState.PeerCreated ||
