@@ -366,7 +366,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        StartCoroutine(CoCheckActiveHost(otherPlayer));
+        if (otherPlayer == PhotonNetwork.PlayerList[currHost])
+        {
+            StartCoroutine(CoCheckActiveHost(otherPlayer));
+        }
     }
 
     private IEnumerator CoCheckActiveHost(Player player)
@@ -397,6 +400,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         // change back to original settings
         judgingUI.SetActive(false);
+        drawingUI.SetActive(false);
+        pickPanel.SetActive(false);
+        confirmSubmitPanel.SetActive(false);
         timerUI.SetActive(true);
         state = GameState.HostPlaying;
         // reset the submission status
