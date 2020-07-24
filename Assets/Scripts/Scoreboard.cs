@@ -125,7 +125,9 @@ public class Scoreboard : MonoBehaviour
                 TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
                 GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
                 RawImage avatar = tempListing.transform.GetChild(3).GetComponent<RawImage>();
+                Toggle hasSubmit = tempListing.transform.GetChild(4).GetComponent<Toggle>();
 
+                hasSubmit.isOn = (bool)player.CustomProperties["HasSubmitted"];
                 scoreText.text = player.CustomProperties["Score"].ToString();
                 nameText.text = player.NickName.ToString();
                 int ptr = (int) player.CustomProperties["Avatar"];

@@ -130,21 +130,24 @@ public class ReportController : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        if ((int)otherPlayer.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
+        if (otherPlayer.IsInactive)
         {
-            if (PhotonNetwork.IsMasterClient)
+            if ((int)otherPlayer.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
             {
-                FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
-                otherPlayer.NickName + " has been kicked.");
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+                    otherPlayer.NickName + " has been kicked.");
+                }
+                StartCoroutine(FindObjectOfType<Scoreboard>().CoRefresh());
             }
-            StartCoroutine(FindObjectOfType<Scoreboard>().CoRefresh());
-        }
-        else
-        {
-            if (PhotonNetwork.IsMasterClient)
+            else
             {
-                FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
-                otherPlayer.NickName + " has disconnected.");
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+                    otherPlayer.NickName + " has disconnected.");
+                }
             }
         }
     }

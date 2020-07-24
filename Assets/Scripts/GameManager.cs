@@ -366,7 +366,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        if (otherPlayer == PhotonNetwork.PlayerList[currHost])
+        if (otherPlayer.IsInactive && otherPlayer == PhotonNetwork.PlayerList[currHost])
         {
             StartCoroutine(CoCheckActiveHost(otherPlayer));
         }
