@@ -219,15 +219,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    private IEnumerator CoResetSubmissionStatus()
-    {
-        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
-        playerProps.Add("hasSubmitted", false);
-        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
-
-        yield return new WaitForSeconds(1f);
-
-    }
+    
 
     private bool DidAllSubmit()
     {
@@ -406,8 +398,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         confirmSubmitPanel.SetActive(false);
         timerUI.SetActive(true);
         state = GameState.HostPlaying;
-        // reset the submission status
-        StartCoroutine(CoResetSubmissionStatus());
+        
         // delete the drawings from previous round
         /*
         if (PhotonNetwork.IsMasterClient) {
@@ -656,6 +647,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             Debug.Log("set score done");
         }
 
+        // reset the submission status
+        StartCoroutine(CoResetSubmissionStatus());
+
         yield return StartCoroutine(scoreboard.CoRefresh());
 
         if (PhotonNetwork.IsMasterClient) 
@@ -673,6 +667,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
             
         }
+
+    }
+
+    private IEnumerator CoResetSubmissionStatus()
+    {
+        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
+        playerProps.Add("hasSubmitted", false);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
+
+        yield return new WaitForSeconds(1f);
 
     }
 

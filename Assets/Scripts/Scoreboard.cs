@@ -35,6 +35,7 @@ public class Scoreboard : MonoBehaviour
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         playerOps.Add("Score", 0);
         playerOps.Add("ReportCount", 0);
+        playerOps.Add("hasSubmitted", false);
         player.SetCustomProperties(playerOps);
         yield return new WaitForSeconds(1f);
     }
