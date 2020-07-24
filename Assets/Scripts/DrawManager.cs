@@ -94,6 +94,7 @@ public class DrawManager : MonoBehaviour
         
     }
 
+
     public void SetBrushSize(float brushSize)
     {
         if (brushSize > 0)
