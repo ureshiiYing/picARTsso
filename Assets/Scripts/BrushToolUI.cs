@@ -19,10 +19,6 @@ public class BrushToolUI : MonoBehaviour
         manager.SetBrushSize(brushSize);
     }
 
-    private void OnDisable()
-    {
-        Clear();
-    }
 
     // called when the colour picker button is pressed
     public void SetBrushColour()

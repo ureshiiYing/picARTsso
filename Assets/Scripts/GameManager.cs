@@ -401,6 +401,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // change back to original settings
         judgingUI.SetActive(false);
         drawingUI.SetActive(false);
+        drawingUI.GetComponent<BrushToolUI>().Clear();
         pickPanel.SetActive(false);
         confirmSubmitPanel.SetActive(false);
         timerUI.SetActive(true);
