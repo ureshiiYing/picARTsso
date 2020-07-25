@@ -134,6 +134,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // this space left for if using any start/ update/ on enable methods
     private void Start()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
         InitialiseGame();
         if (PhotonNetwork.IsMasterClient)
         {
