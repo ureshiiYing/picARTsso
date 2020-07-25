@@ -73,6 +73,7 @@ public class ReportController : MonoBehaviourPunCallbacks //, IOnEventCallback
             ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
             playerOps.Add("IsKicked", true);
             player.SetCustomProperties(playerOps);
+
             PhotonView photonView = PhotonView.Get(this);
             photonView.RPC("KickPlayer", player);
         }

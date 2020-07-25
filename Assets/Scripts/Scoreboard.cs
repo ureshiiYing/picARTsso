@@ -50,12 +50,10 @@ public class Scoreboard : MonoBehaviour
     {
         ExitGames.Client.Photon.Hashtable playerOps = new ExitGames.Client.Photon.Hashtable();
         int newScore = (int)player.CustomProperties["Score"] + 1;
-        Debug.Log("updating score: " + newScore);
         playerOps.Add("Score", newScore);
         player.SetCustomProperties(playerOps);
-        yield return new WaitForSeconds(1f);
 
-        Debug.Log("new score: " + (int)player.CustomProperties["Score"]);
+        yield return new WaitForSeconds(1f);
     }
 
 
@@ -138,8 +136,6 @@ public class Scoreboard : MonoBehaviour
                 int ptr = (int) player.CustomProperties["Avatar"];
                 avatar.texture = avatarsFile[ptr];
                 toggle.isOn =  (bool)player.CustomProperties["hasSubmitted"];
-                Debug.Log(player.NickName + " scoreboard" + player.CustomProperties["hasSubmitted"].ToString() + 
-                    " toggle: " + toggle.isOn );
 
                 if (player != PhotonNetwork.LocalPlayer)
                 {
@@ -164,13 +160,11 @@ public class Scoreboard : MonoBehaviour
             {
                 try
                 {
-                    Debug.Log(sortedPlayers[i].NickName);
                     submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
                 } 
                 catch (Exception e)
                 {
-                    Debug.Log(sortedPlayers[i].NickName);
-                    Debug.Log(scoreContainer.GetChild(i) + " " + e);
+                    Debug.LogError(e);
                 }
             }
         }
@@ -179,7 +173,6 @@ public class Scoreboard : MonoBehaviour
         if (submissionStatus != null)
         {
             submissionStatus.isOn = hasSubmitted;
-            Debug.Log(player.NickName + " toggle:" + submissionStatus.isOn + " ppty:" + hasSubmitted);
         }
         else
         {

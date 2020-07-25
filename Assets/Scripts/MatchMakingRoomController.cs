@@ -87,10 +87,6 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.CurrentRoom.PlayerTtl = 0; // 0sec
-            PhotonNetwork.CurrentRoom.EmptyRoomTtl = 0; // 0sec
-            // clears all cache, should work idk
-            PhotonNetwork.OpRemoveCompleteCache();
         }
         else
         {
