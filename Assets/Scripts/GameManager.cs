@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // fix this logic: called by everyone lmao?
     public void OnHostSkip()
     {
-        wordGenerator.GenerateWord();
+        wordGenerator.GetWord();
         TriggerNextRound_S();
     }
 
@@ -500,7 +500,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 }
                 else if (PhotonNetwork.LocalPlayer == PhotonNetwork.PlayerList[currHost])
                 {
-                    wordGenerator.GenerateWord();
+                    wordGenerator.GetWord();
                 }
             }
             else if (state == GameState.PlayerPlaying)
@@ -718,6 +718,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void EndGame_R()
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.PlayerTtl = 0; // 0sec
+            PhotonNetwork.CurrentRoom.EmptyRoomTtl = 0; // 0sec
+            // clears all cache, should work idk
+            PhotonNetwork.OpRemoveCompleteCache();
+        }
+
         GameObject[] forMyTransforms = new GameObject[3] { firstPlace, secPlace, thirdPlace };
         object[] data = scoreboard.GetTopThreePlayers();
         
