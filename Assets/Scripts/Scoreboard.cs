@@ -66,15 +66,15 @@ public class Scoreboard : MonoBehaviour
     }
 
 
-    public Player[] SortByScore()
+    public Player[] SortByScore(Player[] playersToSort)
     {
-        int len = PhotonNetwork.PlayerList.Length;
+        int len = playersToSort.Length;
         Player[] players = new Player[len];
 
         // local copy
         for (int i = 0; i < len; i++)
         {
-            players[i] = PhotonNetwork.PlayerList[i];
+            players[i] = playersToSort[i];
         }
         // selection sort
         for (int i = 0; i < len; i++)
@@ -121,7 +121,7 @@ public class Scoreboard : MonoBehaviour
 
     public void ListScore()
     {
-        Player[] players = SortByScore();
+        Player[] players = SortByScore(PhotonNetwork.PlayerList);
         foreach (Player player in players)
         {
             if (!(bool)player.CustomProperties["IsKicked"])
@@ -131,14 +131,15 @@ public class Scoreboard : MonoBehaviour
                 TMP_Text nameText = tempListing.transform.GetChild(2).GetComponent<TMP_Text>();
                 GameObject reportButton = tempListing.transform.GetChild(0).gameObject;
                 RawImage avatar = tempListing.transform.GetChild(3).GetComponent<RawImage>();
+                Toggle toggle = tempListing.transform.GetChild(4).GetComponent<Toggle>();
 
                 scoreText.text = player.CustomProperties["Score"].ToString();
                 nameText.text = player.NickName.ToString();
                 int ptr = (int) player.CustomProperties["Avatar"];
                 avatar.texture = avatarsFile[ptr];
-
-                ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
-                Debug.Log(player.NickName + " scoreboard" + player.CustomProperties["hasSubmitted"].ToString());
+                toggle.isOn =  (bool)player.CustomProperties["hasSubmitted"];
+                Debug.Log(player.NickName + " scoreboard" + player.CustomProperties["hasSubmitted"].ToString() + 
+                    " toggle: " + toggle.isOn );
 
                 if (player != PhotonNetwork.LocalPlayer)
                 {
@@ -163,10 +164,12 @@ public class Scoreboard : MonoBehaviour
             {
                 try
                 {
+                    Debug.Log(sortedPlayers[i].NickName);
                     submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
                 } 
                 catch (Exception e)
                 {
+                    Debug.Log(sortedPlayers[i].NickName);
                     Debug.Log(scoreContainer.GetChild(i) + " " + e);
                 }
             }
@@ -176,6 +179,7 @@ public class Scoreboard : MonoBehaviour
         if (submissionStatus != null)
         {
             submissionStatus.isOn = hasSubmitted;
+            Debug.Log(player.NickName + " toggle:" + submissionStatus.isOn + " ppty:" + hasSubmitted);
         }
         else
         {
