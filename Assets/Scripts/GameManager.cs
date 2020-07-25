@@ -271,15 +271,15 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
 
-    // load menu scene and into room panel
-    public void PlayAgain()
-    {
-        SceneManager.LoadScene(0);
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonNetwork.CurrentRoom.IsOpen = true;
-        }
-    }
+    //// load menu scene and into room panel
+    //public void PlayAgain()
+    //{
+    //    SceneManager.LoadScene(0);
+    //    if (PhotonNetwork.IsMasterClient)
+    //    {
+    //        PhotonNetwork.CurrentRoom.IsOpen = true;
+    //    }
+    //}
 
     // when current masterclient disconnects, new masterclient handles the countdown
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -724,15 +724,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             PhotonNetwork.CurrentRoom.PlayerTtl = 0; // 0sec
             PhotonNetwork.CurrentRoom.EmptyRoomTtl = 0; // 0sec
-            // clears all cache, should work idk
-            PhotonNetwork.OpRemoveCompleteCache();
         }
 
         GameObject[] forMyTransforms = new GameObject[3] { firstPlace, secPlace, thirdPlace };
         object[] data = scoreboard.GetTopThreePlayers();
-        
+
         // display winner
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
             if (data[i] != null)
             {
@@ -742,9 +740,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         judgingUI.SetActive(false);
         endingUI.SetActive(true);
-
     }
-
 
     private void SettingWinners(GameObject winner, string name, Texture2D avatar)
     {
