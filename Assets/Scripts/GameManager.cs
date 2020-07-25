@@ -539,7 +539,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         string wordToDisplay = (string)data[0];
 
         // transition drawing players to drawingUI
-        if (PhotonNetwork.LocalPlayer != PhotonNetwork.PlayerList[currHost])
+        if (PhotonNetwork.LocalPlayer != PhotonNetwork.PlayerList[currHost] 
+            && !(bool)PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"])
         {
             waitingRoom.SetActive(false);
             drawingUI.SetActive(true);
