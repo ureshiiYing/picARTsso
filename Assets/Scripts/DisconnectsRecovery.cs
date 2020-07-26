@@ -150,14 +150,14 @@ namespace Photon.Pun.UtilityScripts
             }
             rejoinCalled = false;    
             Debug.LogFormat("Quick rejoin failed with error code: {0} & error message: {1}", returnCode, message);
-            StartCoroutine(RejoinRoomFailed(message));
+            StartCoroutine(RejoinRoomFailed());
         }
 
         // insert kicked from game notice for being idle for too long, returns to menu scene promptly after 3 seconds
-        private IEnumerator RejoinRoomFailed(string message)
+        private IEnumerator RejoinRoomFailed()
         {
             FindObjectOfType<ErrorMessagesHandler>().DisplayError(
-                string.Format("Failed to rejoin room: {0}. Please rejoin game.", message));
+                "Failed to rejoin room: Connection Timeout. Please rejoin game.");
             yield return new WaitForSecondsRealtime(3.0f);
             SceneManager.LoadScene(0);
         }

@@ -13,11 +13,13 @@ public class DrawingGallery : MonoBehaviour
     public UploadDownloadDrawing uploader;
     public Texture2D defaultTexture;
     public GameObject saveButton;
+    public GameObject instructionsPanel;
 
     private string[] downloadPaths;
     private int[] randomisedDownloadPaths;
     private int drawingIndex = 0; // pointer of randomised array
     private int winnerIndex = -1;
+    private bool showInstructionText = false;
 
 
     // judging screen is only loaded after everyone has submitted
@@ -28,9 +30,12 @@ public class DrawingGallery : MonoBehaviour
 
         saveButton.SetActive(true);
 
+        DisplayInstructionsToToggle();
+
         // todiscuss: wait until the drawing is loaded
         // in actual game, the drawing from index 0 should be displayed
         LoadDrawing(GetActualIndexOfDownloadPathAt(drawingIndex));
+
         
     }
 
@@ -39,6 +44,24 @@ public class DrawingGallery : MonoBehaviour
         saveButton.SetActive(false);
     }
 
+    public void DisplayInstructionsToToggle()
+    {
+        Debug.Log("display");
+        if (!showInstructionText)
+        {
+            StartCoroutine(CoDisplayInstructions());
+        }
+    }
+
+    private IEnumerator CoDisplayInstructions()
+    {
+        instructionsPanel.SetActive(true);
+        instructionsPanel.GetComponentInChildren<TMP_Text>().text = "To toggle between the drawings, " +
+            "you can tap on the left/ right sides of the screen.";
+        yield return new WaitForSecondsRealtime(3f);
+        instructionsPanel.SetActive(false);
+        showInstructionText = true;
+    }
 
     // called by game manager to set the paths for gallery to use
     public void SetDownloadPaths(Player[] players)
