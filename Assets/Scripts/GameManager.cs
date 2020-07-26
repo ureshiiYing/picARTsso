@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 break;
 
             case EventCodes.SetNextHost:
-                SetNextHost_R();
+                SetNextHost_R(o);
                 break;
 
             case EventCodes.RefreshTimer:
@@ -363,7 +363,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (otherPlayer.IsInactive && otherPlayer == PhotonNetwork.PlayerList[currHost])
         {
-            StartCoroutine(CoCheckActiveHost(otherPlayer));
+            if ((bool)otherPlayer.CustomProperties["IsKicked"] && PhotonNetwork.IsMasterClient)
+            {
+                TriggerNextRound_S();
+            }
+            else
+            {
+                StartCoroutine(CoCheckActiveHost(otherPlayer));
+            }
         }
     }
 
@@ -378,13 +385,24 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private IEnumerator CoResetSubmissionStatus()
     {
-        ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
-        playerProps.Add("hasSubmitted", false);
-        PhotonNetwork.LocalPlayer.SetCustomProperties(playerProps);
-
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            ExitGames.Client.Photon.Hashtable playerProps = new ExitGames.Client.Photon.Hashtable();
+            playerProps.Add("hasSubmitted", false);
+            player.SetCustomProperties(playerProps);
+        }
         yield return new WaitForSeconds(1f);
+    }
 
-        yield return StartCoroutine(scoreboard.CoRefresh());
+    private IEnumerator CoResetRefresh()
+    {
+        yield return StartCoroutine(CoResetSubmissionStatus());
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.StartNewRound,
+            null,
+            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
+            new SendOptions { Reliability = true }
+        );
     }
 
     #endregion
@@ -394,12 +412,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void StartNewRound_S()
     {
-        PhotonNetwork.RaiseEvent(
-            (byte)EventCodes.StartNewRound,
-            null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
-            new SendOptions { Reliability = true }
-        );
+        // reset the submission status
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(CoResetRefresh());
+        }
+
+
     }
 
     public void StartNewRound_R()
@@ -412,8 +431,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         confirmSubmitPanel.SetActive(false);
         timerUI.SetActive(true);
         state = GameState.HostPlaying;
-        // reset the submission status
-        StartCoroutine(CoResetSubmissionStatus());
+
+        StartCoroutine(scoreboard.CoRefresh());
         // delete the drawings from previous round
         /*
         if (PhotonNetwork.IsMasterClient) {
@@ -454,7 +473,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         PhotonNetwork.RaiseEvent(
             (byte)EventCodes.TriggerNextRound,
             null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient, CachingOption = EventCaching.AddToRoomCache },
+            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient },
             new SendOptions { Reliability = true }
         );
     }
@@ -492,7 +511,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         if (currTime <= 0)
         {
-            if (state == GameState.HostPlaying && PhotonNetwork.IsMasterClient)
+            if (state == GameState.HostPlaying)
             {
                 // if the host did not manage to input in time, automatically skipped.
                 if (PhotonNetwork.IsMasterClient)
@@ -686,16 +705,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void SetNextHost_S()
     {
-        PhotonNetwork.RaiseEvent(
-            (byte)EventCodes.SetNextHost,
-            null,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All, CachingOption = EventCaching.AddToRoomCache },
-            new SendOptions { Reliability = true }
-        );
-    }
-
-    public void SetNextHost_R() 
-    {
         int numOfPlayers = PhotonNetwork.PlayerList.Length;
         if (currHost >= (numOfPlayers - 1))
         {
@@ -706,6 +715,20 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             currHost += 1;
         }
         Debug.Log(currHost + " " + PhotonNetwork.PlayerList[currHost].NickName);
+
+        object[] package = new object[] { currHost };
+
+        PhotonNetwork.RaiseEvent(
+            (byte)EventCodes.SetNextHost,
+            package,
+            new RaiseEventOptions { Receivers = ReceiverGroup.Others, CachingOption = EventCaching.AddToRoomCache },
+            new SendOptions { Reliability = true }
+        );
+    }
+
+    public void SetNextHost_R(object[] data) 
+    {
+        currHost = (int)data[0];
     }
 
     public void EndGame_S()
