@@ -43,6 +43,7 @@ public class DrawingGallery : MonoBehaviour
     // called by game manager to set the paths for gallery to use
     public void SetDownloadPaths(Player[] players)
     {
+        Debug.Log(players);
         downloadPaths = new string[players.Length];
         for (int i = 0; i < players.Length; i++)
         {

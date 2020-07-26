@@ -214,6 +214,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         yield return new WaitForSeconds(1f);
         Debug.Log("setting submitted" + PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"].ToString());
 
+        Debug.Log("didallsubmit: " + DidAllSubmit());
         // check if everyone has submitted
         if (DidAllSubmit())
         {
@@ -229,8 +230,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         foreach(Player player in PhotonNetwork.PlayerList)
         {
             // if this player is not the host
-            if (player != currHost)
+            if (!player.Equals(currHost))
             {
+                Debug.Log(player.NickName + " hasSubmitted: " + (bool)player.CustomProperties["hasSubmitted"]);
                 // if this player hasnt submit
                 if ((bool)player.CustomProperties["hasSubmitted"] == false)
                 {
@@ -349,40 +351,71 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         for(int i = 0; i < numOfPlayers; i++)
         {
             // nd to exclude host and kicked ppl
-            if (PhotonNetwork.PlayerList[i] != currHost || (bool)PhotonNetwork.PlayerList[i].CustomProperties["IsKicked"])
+            if (!PhotonNetwork.PlayerList[i].Equals(currHost) || (bool)PhotonNetwork.PlayerList[i].CustomProperties["IsKicked"])
             {
                 downloadPlayer.Add(PhotonNetwork.PlayerList[i]);
                 index++;
             }
         }
         // copy to array
-        Player[] res = new Player[index + 1];
-        for (int j = 0; j < index + 1; j ++)
+        Player[] res = new Player[index];
+        for (int j = 0; j < index; j ++)
         {
             res[j] = (Player) downloadPlayer[j];
+            Debug.Log(res[j].NickName + " + URL: " + res[j].CustomProperties["URL"].ToString());
         }
 
+        Debug.Log(res);
         return res;
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        // when player leaves the room but player data still present (immediately after kicked or disconnected)
-        if (otherPlayer.IsInactive && otherPlayer == currHost)
+        if (!PhotonNetwork.CurrentRoom.Players.ContainsValue(otherPlayer))
         {
-            if ((bool)otherPlayer.CustomProperties["IsKicked"] && PhotonNetwork.IsMasterClient)
+            if (otherPlayer.Equals(currHost))
             {
-                TriggerNextRound_S();
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    TriggerNextRound_S();
+                }
+                FindObjectOfType<ErrorMessagesHandler>().DisplayError("Host has left the room... Starting new round.");
+            }
+            else
+            {
+                if (state == GameState.PlayerPlaying)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        if (DidAllSubmit())
+                        {
+                            OnAllSubmitted_S();
+                        }
+                    }
+
+                }
+                else if (state == GameState.Judging)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        OnAllSubmitted_S();
+                    }
+                    FindObjectOfType<ErrorMessagesHandler>().DisplayError("Refreshing gallery...");
+                }
             }
         }
-        else if (!PhotonNetwork.CurrentRoom.Players.ContainsValue(otherPlayer)
-            && otherPlayer == currHost) // when player data is deleted
+        else if (otherPlayer.IsInactive)
         {
-            if (PhotonNetwork.IsMasterClient)
+            if ((bool)otherPlayer.CustomProperties["IsKicked"] && otherPlayer.Equals(currHost))
             {
-                TriggerNextRound_S();
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    TriggerNextRound_S();
+                }
+                FindObjectOfType<ErrorMessagesHandler>().DisplayError("Host has been kicked... Starting new round.");
             }
         }
+            
     }
 
     private IEnumerator CoResetSubmissionStatus()
@@ -456,7 +489,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         // redirect normal players to waiting room and host to host room
         // redirect the players
-        if (PhotonNetwork.LocalPlayer == currHost)
+        if (PhotonNetwork.LocalPlayer.Equals(currHost))
         {
             hostPanel.SetActive(true);
             waitingRoom.SetActive(false);   
@@ -520,7 +553,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 {
                     OnHostSkip();
                 }
-                else if (PhotonNetwork.LocalPlayer == currHost)
+                else if (PhotonNetwork.LocalPlayer.Equals(currHost))
                 {
                     wordGenerator.GetWord();
                 }
@@ -529,7 +562,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 // player ran out of time to draw, force submit
                 if (!(bool)PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"] 
-                    && PhotonNetwork.LocalPlayer != currHost)
+                    && !PhotonNetwork.LocalPlayer.Equals(currHost))
                 {
                     // if hasnt submit and not the host
                     OnReadyToSubmit();
@@ -561,7 +594,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         string wordToDisplay = (string)data[0];
 
         // transition drawing players to drawingUI
-        if (PhotonNetwork.LocalPlayer != currHost 
+        if (!PhotonNetwork.LocalPlayer.Equals(currHost)
             && !(bool)PhotonNetwork.LocalPlayer.CustomProperties["hasSubmitted"])
         {
             waitingRoom.SetActive(false);
@@ -595,7 +628,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         Player player = (Player)data[0];
         //change scoreboard toggle
-        scoreboard.ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
+        //scoreboard.ToggleSubmissionStatus(player, (bool)player.CustomProperties["hasSubmitted"]);
+        StartCoroutine(scoreboard.CoRefresh());
         Debug.Log(player.NickName + " submitted" + player.CustomProperties["hasSubmitted"].ToString());
     }
 
@@ -626,7 +660,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         state = GameState.Judging;
 
         // only host can see pick button
-        if (PhotonNetwork.LocalPlayer == currHost)
+        if (PhotonNetwork.LocalPlayer.Equals(currHost))
         {
             pickPanel.SetActive(true);
         }

@@ -145,7 +145,7 @@ public class ReportController : MonoBehaviourPunCallbacks //, IOnEventCallback
     {
         if (otherPlayer.IsInactive)
         {
-            if ((int)otherPlayer.CustomProperties["ReportCount"] > (int)PhotonNetwork.PlayerList.Length / 2)
+            if ((bool) otherPlayer.CustomProperties["IsKicked"])
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -161,6 +161,18 @@ public class ReportController : MonoBehaviourPunCallbacks //, IOnEventCallback
                     FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
                     otherPlayer.NickName + " has disconnected.");
                 }
+            }
+        }
+        else if (!PhotonNetwork.CurrentRoom.Players.ContainsValue(otherPlayer))
+        {
+            if (!(bool)otherPlayer.CustomProperties["IsKicked"])
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    FindObjectOfType<Chat>().chatClient.PublishMessage(PhotonNetwork.CurrentRoom.Name,
+                    otherPlayer.NickName + " has left the room.");
+                }
+                
             }
         }
     }

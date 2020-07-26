@@ -85,7 +85,7 @@ public class Scoreboard : MonoBehaviour
                 int jScore = (int)players[j].CustomProperties["Score"];
                 bool jKicked = (bool)players[i].CustomProperties["IsKicked"];
 
-                if (jScore > iScore && (iKicked == jKicked) || iKicked)
+                if ((jScore > iScore && (iKicked == jKicked)) || (iKicked && !jKicked))
                 {
                     iScore = jScore;
                     currIndex = j;
@@ -149,36 +149,36 @@ public class Scoreboard : MonoBehaviour
         }
     }
     
-    public void ToggleSubmissionStatus(Player player, bool hasSubmitted)
-    {
-        Toggle submissionStatus = null;
+    //public void ToggleSubmissionStatus(Player player, bool hasSubmitted)
+    //{
+    //    Toggle submissionStatus = null;
 
-        // find the ith position of the player in the sorted player array
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
-        {
-            if (sortedPlayers[i] == player)
-            {
-                try
-                {
-                    submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
-                } 
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
-            }
-        }
+    //    // find the ith position of the player in the sorted player array
+    //    for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
+    //    {
+    //        if (sortedPlayers[i] == player)
+    //        {
+    //            try
+    //            {
+    //                submissionStatus = scoreContainer.GetChild(i).gameObject.GetComponentInChildren<Toggle>();
+    //            } 
+    //            catch (Exception e)
+    //            {
+    //                Debug.LogError(e);
+    //            }
+    //        }
+    //    }
 
 
-        if (submissionStatus != null)
-        {
-            submissionStatus.isOn = hasSubmitted;
-        }
-        else
-        {
-            Debug.LogError("please set submission toggle");
-        }
-    }
+    //    if (submissionStatus != null)
+    //    {
+    //        submissionStatus.isOn = hasSubmitted;
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("please set submission toggle");
+    //    }
+    //}
 
     public object[] GetTopThreePlayers()
     {
