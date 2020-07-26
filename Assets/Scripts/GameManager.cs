@@ -375,11 +375,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             if (otherPlayer.Equals(currHost))
             {
-                if (PhotonNetwork.IsMasterClient)
+                if (state != GameState.Ending)
                 {
-                    TriggerNextRound_S();
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        TriggerNextRound_S();
+                    }
+                    FindObjectOfType<ErrorMessagesHandler>().DisplayError("Host has left the room... Starting new round.");
                 }
-                FindObjectOfType<ErrorMessagesHandler>().DisplayError("Host has left the room... Starting new round.");
             }
             else
             {
@@ -461,7 +464,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         // change back to original settings
         judgingUI.SetActive(false);
         drawingUI.SetActive(false);
-        drawingUI.GetComponent<BrushToolUI>().Clear();
+        // drawingUI.GetComponent<BrushToolUI>().Clear();
         pickPanel.SetActive(false);
         confirmSubmitPanel.SetActive(false);
         timerUI.SetActive(true);
