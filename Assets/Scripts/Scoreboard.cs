@@ -186,7 +186,7 @@ public class Scoreboard : MonoBehaviour
 
         for (int i = 0; i < sortedPlayers.Length; i++)
         {
-            if (i > 3)
+            if (i >= 3)
             {
                 break;
             }
