@@ -227,10 +227,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private bool DidAllSubmit()
     {
+ 
         foreach(Player player in PhotonNetwork.PlayerList)
         {
             // if this player is not the host
-            if (!player.Equals(currHost) || (bool) player.CustomProperties["IsKicked"])
+            if (!player.Equals(currHost) && !(bool)player.CustomProperties["IsKicked"])
             {
                 Debug.Log(player.NickName + " hasSubmitted: " + (bool)player.CustomProperties["hasSubmitted"]);
                 // if this player hasnt submit
@@ -350,7 +351,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         for(int i = 0; i < numOfPlayers; i++)
         {
             // nd to exclude host and kicked ppl
-            if (!PhotonNetwork.PlayerList[i].Equals(currHost) || (bool)PhotonNetwork.PlayerList[i].CustomProperties["IsKicked"])
+            if (!PhotonNetwork.PlayerList[i].Equals(currHost) && !(bool)PhotonNetwork.PlayerList[i].CustomProperties["IsKicked"])
             {
                 downloadPlayer.Add(PhotonNetwork.PlayerList[i]);
                 index++;
@@ -424,7 +425,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     {
                         if (PhotonNetwork.IsMasterClient)
                         {
-                            if (DidAllSubmit())
+                            Debug.Log(DidAllSubmit())
+;                            if (DidAllSubmit())
                             {
                                 OnAllSubmitted_S();
                             }
@@ -753,7 +755,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         { 
             // when thrs only two or less players just end the game
             // this game logic abit weird
-            if (PhotonNetwork.PlayerList.Length < 3)
+            if ((GetArrayOfPlayersWithoutHost().Length + 1) < 3)
             {
                 EndGame_S();
             }
