@@ -814,13 +814,13 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
+    - m_Text: 3 points
+      m_Image: {fileID: 0}
     - m_Text: 5 points
       m_Image: {fileID: 0}
     - m_Text: 10 points
       m_Image: {fileID: 0}
     - m_Text: 15 points
-      m_Image: {fileID: 0}
-    - m_Text: 20 points
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:

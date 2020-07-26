@@ -243,7 +243,7 @@ public class MatchMakingLobbyController : MonoBehaviourPunCallbacks
         }
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)createRoomSize };
         roomOps.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
-        roomOps.CustomRoomProperties.Add("MaxPoints", 5);
+        roomOps.CustomRoomProperties.Add("MaxPoints", 3);
         roomOps.CustomRoomProperties.Add("Theme", "GeneralTheme");
         roomOps.CustomRoomProperties.Add("TimeLimit", 30);
         roomOps.CustomRoomProperties.Add("IsPrivate", isRoomPrivate);

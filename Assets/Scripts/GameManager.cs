@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         foreach(Player player in PhotonNetwork.PlayerList)
         {
             // if this player is not the host
-            if (!player.Equals(currHost))
+            if (!player.Equals(currHost) || (bool) player.CustomProperties["IsKicked"])
             {
                 Debug.Log(player.NickName + " hasSubmitted: " + (bool)player.CustomProperties["hasSubmitted"]);
                 // if this player hasnt submit
@@ -254,7 +254,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         int score = (int)player.CustomProperties["Score"];
         if (score >= numOfPointsToWin)
         {
-            state = GameState.Ending;
             EndGame_S();
         } 
         else
@@ -409,13 +408,39 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
         else if (otherPlayer.IsInactive)
         {
-            if ((bool)otherPlayer.CustomProperties["IsKicked"] && otherPlayer.Equals(currHost))
+            if ((bool)otherPlayer.CustomProperties["IsKicked"])
             {
-                if (PhotonNetwork.IsMasterClient)
+                if (otherPlayer.Equals(currHost))
                 {
-                    TriggerNextRound_S();
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        TriggerNextRound_S();
+                    }
+                    FindObjectOfType<ErrorMessagesHandler>().DisplayError("Host has been kicked... Starting new round.");
                 }
-                FindObjectOfType<ErrorMessagesHandler>().DisplayError("Host has been kicked... Starting new round.");
+                else
+                {
+                    if (state == GameState.PlayerPlaying)
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            if (DidAllSubmit())
+                            {
+                                OnAllSubmitted_S();
+                            }
+                        }
+
+                    }
+                    else if (state == GameState.Judging)
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            OnAllSubmitted_S();
+                        }
+                        FindObjectOfType<ErrorMessagesHandler>().DisplayError("Refreshing gallery...");
+                    }
+                }
+                
             }
         }
             
@@ -780,6 +805,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void EndGame_R()
     {
+        state = GameState.Ending;
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.CurrentRoom.PlayerTtl = 0; // 0sec

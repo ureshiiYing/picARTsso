@@ -165,16 +165,16 @@ public class MatchMakingRoomController : MonoBehaviourPunCallbacks
         switch (val)
         {
             case 0:
-                newRoomOps.Add("MaxPoints", 5);
+                newRoomOps.Add("MaxPoints", 3);
                 break;
             case 1:
-                newRoomOps.Add("MaxPoints", 10);
+                newRoomOps.Add("MaxPoints", 5);
                 break;
             case 2:
-                newRoomOps.Add("MaxPoints", 15);
+                newRoomOps.Add("MaxPoints", 10);
                 break;
             case 3:
-                newRoomOps.Add("MaxPoints", 20);
+                newRoomOps.Add("MaxPoints", 15);
                 break;
             default:
                 Debug.Log("nothing is selected for max points...");
